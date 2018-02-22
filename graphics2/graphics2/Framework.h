@@ -1,8 +1,5 @@
 #pragma once
-#include <Windows.h>
-#include <string>
-#include <exception>
-#include <memory>
+#include "Core.h"
 
 #define DEFAULT_FRAMERATE 60
 #define DEFAULT_WIDTH 640
