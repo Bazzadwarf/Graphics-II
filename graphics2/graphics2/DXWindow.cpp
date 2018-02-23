@@ -102,59 +102,67 @@ void DXWindow::InitialiseDirectX()
 
 bool DXWindow::GetDeviceAndSwapChain()
 {
-	DXGI_SWAP_CHAIN_DESC sd;
-	ZeroMemory(&sd, sizeof(sd));
-	sd.BufferCount = 1;
-	sd.BufferDesc.Width = DEFAULT_WIDTH;
-	sd.BufferDesc.Height = DEFAULT_HEIGHT;
-	sd.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-	sd.BufferDesc.RefreshRate.Numerator = 60;
-	sd.BufferDesc.RefreshRate.Denominator = 1;
-	sd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-	sd.OutputWindow = _hWnd;
-	sd.SampleDesc.Count = 1;
-	sd.SampleDesc.Quality = 0;
-	sd.Windowed = TRUE;
+	UINT createDeviceFlags = 0;
 
-	D3D_FEATURE_LEVEL FeatureLevelsRequested = D3D_FEATURE_LEVEL_11_0;
-	UINT numLevelsRequested = 1;
-	D3D_FEATURE_LEVEL FeatureLevelsSupported;
-	
-	HRESULT hr;
-	
-	if (FAILED(hr = D3D11CreateDeviceAndSwapChain(NULL,
-		D3D_DRIVER_TYPE_HARDWARE,
-		NULL,
-		0,
-		&FeatureLevelsRequested,
-		numLevelsRequested,
-		D3D11_SDK_VERSION,
-		&sd,
-		&_swapChain,
-		&_device,
-		&FeatureLevelsSupported,
-		&_deviceContext)))
+	// We are going to only accept a hardware driver or a WARP
+	// driver
+	D3D_DRIVER_TYPE driverTypes[] =
 	{
-		return hr;
+		D3D_DRIVER_TYPE_HARDWARE,
+		D3D_DRIVER_TYPE_WARP
+	};
+	unsigned int totalDriverTypes = ARRAYSIZE(driverTypes);
+
+	D3D_FEATURE_LEVEL featureLevels[] =
+	{
+		D3D_FEATURE_LEVEL_11_0
+	};
+	unsigned int totalFeatureLevels = ARRAYSIZE(featureLevels);
+
+	DXGI_SWAP_CHAIN_DESC swapChainDesc = { 0 };
+	swapChainDesc.BufferCount = 1;
+	swapChainDesc.BufferDesc.Width = _width;
+	swapChainDesc.BufferDesc.Height = _height;
+	swapChainDesc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	// Set the refresh rate to 0 and let DXGI determine the best option (refer to DXGI best practices)
+	swapChainDesc.BufferDesc.RefreshRate.Numerator = 0;
+	swapChainDesc.BufferDesc.RefreshRate.Denominator = 0;
+	swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
+	swapChainDesc.OutputWindow = _hWnd;
+	// Start out windowed
+	swapChainDesc.Windowed = true;
+	// Enable multi-sampling to give smoother lines (set to 1 if performance becomes an issue)
+	swapChainDesc.SampleDesc.Count = 4;
+	swapChainDesc.SampleDesc.Quality = 0;
+
+	// Loop through the driver types to determine which one is available to us
+	D3D_DRIVER_TYPE driverType = D3D_DRIVER_TYPE_UNKNOWN;
+
+	for (unsigned int driver = 0; driver < totalDriverTypes && driverType == D3D_DRIVER_TYPE_UNKNOWN; driver++)
+	{
+		if (SUCCEEDED(D3D11CreateDeviceAndSwapChain(0,
+			driverTypes[driver],
+			0,
+			createDeviceFlags,
+			featureLevels,
+			totalFeatureLevels,
+			D3D11_SDK_VERSION,
+			&swapChainDesc,
+			_swapChain.GetAddressOf(),
+			_device.GetAddressOf(),
+			0,
+			_deviceContext.GetAddressOf()
+		)))
+
+		{
+			driverType = driverTypes[driver];
+		}
 	}
-	
-	ID3D11Texture2D* backBuffer;
-
-	hr = _swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&backBuffer);
-
-	_device->CreateRenderTargetView(backBuffer, NULL, &_renderTargetView);
-
-	_deviceContext->OMSetRenderTargets(1, &_renderTargetView, NULL);
-
-	D3D11_VIEWPORT vp;
-	vp.Width = DEFAULT_WIDTH;
-	vp.Height = DEFAULT_HEIGHT;
-	vp.MinDepth = 0.0f;
-	vp.MaxDepth = 1.0f;
-	vp.TopLeftX = 0;
-	vp.TopLeftY = 0;
-	_deviceContext->RSSetViewports(1, &vp);
-
+	if (driverType == D3D_DRIVER_TYPE_UNKNOWN)
+	{
+		// Unable to find a suitable device driver
+		return false;
+	}
 	return true;
 }
 
@@ -245,7 +253,7 @@ LRESULT DXWindow::MsgProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		case WM_SIZE:
 			_width = LOWORD(lParam);
 			_height = HIWORD(lParam);
-			//OnResize(wParam);
+			OnResize(wParam);
 			//Render();
 			break;
 		

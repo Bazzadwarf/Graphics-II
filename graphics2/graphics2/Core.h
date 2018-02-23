@@ -10,6 +10,9 @@
 #include <wrl.h>
 #include "resource.h"
 
+#pragma comment(lib, "d3d11.lib")
+#pragma comment(lib, "d3dcompiler.lib")
+
 using namespace DirectX;
 using namespace std;
 

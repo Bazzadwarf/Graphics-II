@@ -35,6 +35,7 @@ void Framework::Setup()
 	{
 		this->_window = new DXWindow(_hInstance, _hPrevInstance, _lpCmdLine, _nCmdShow);
 		_window->SetUpWindow();
+		_window->SetUpDirectX();
 		_window->Run();
 	}
 }
