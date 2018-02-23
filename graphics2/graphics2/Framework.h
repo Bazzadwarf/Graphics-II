@@ -18,7 +18,7 @@ private:
 
 	HINSTANCE _hInstance;
 	HINSTANCE _hPrevInstance;
-	LPSTR _lpCmdLine;
-	int _nCmdShow;
+	LPSTR	  _lpCmdLine;
+	int		  _nCmdShow;
 };
 

@@ -9,3 +9,8 @@
 #include <DirectXColors.h>
 #include <wrl.h>
 #include "resource.h"
+
+using namespace DirectX;
+using namespace std;
+
+using Microsoft::WRL::ComPtr;
