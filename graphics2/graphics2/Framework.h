@@ -1,14 +1,24 @@
 #pragma once
-#include "Core.h"
-
-#define DEFAULT_FRAMERATE 60
-#define DEFAULT_WIDTH 640
-#define DEFAULT_HEIGHT 480
+#include "DXWindow.h"
 
 class Framework
 {
 public:
-	Framework();
+	Framework(HINSTANCE & hInstance,
+			  HINSTANCE & hPrevInstance,
+			  LPSTR & lpCmdLine,
+			  int & nCmdShow);
 	~Framework();
+
+	void Setup();
+	void Run();
+
+private:
+	DXWindow * _window = nullptr;
+
+	HINSTANCE _hInstance;
+	HINSTANCE _hPrevInstance;
+	LPSTR _lpCmdLine;
+	int _nCmdShow;
 };
 

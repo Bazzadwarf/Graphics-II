@@ -8,3 +8,4 @@
 #include <DirectXMath.h>
 #include <DirectXColors.h>
 #include <wrl.h>
+#include "resource.h"
