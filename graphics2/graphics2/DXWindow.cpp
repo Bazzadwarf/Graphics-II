@@ -54,10 +54,10 @@ void DXWindow::SetUpWindow()
 	AdjustWindowRect(&windowRect, WS_OVERLAPPEDWINDOW, FALSE);
 	_width = windowRect.right - windowRect.left;
 	_height = windowRect.bottom - windowRect.top;
-	
-	_hWnd = CreateWindowEx(NULL,
-						   "WindowClass1",    // name of the window class
-						   "Graphics 2",   // title of the window
+
+	_hWnd = CreateWindowExW(NULL,
+						   L"WindowClass1",    // name of the window class
+						   L"Graphics 2",   // title of the window
 						   WS_OVERLAPPEDWINDOW,    // window style
 						   300,    // x-position of the window
 						   300,    // y-position of the window
@@ -298,6 +298,10 @@ LRESULT DXWindow::MsgProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			Render();
 			break;
 		
+		case WM_MOVING:
+			Render();
+			break;
+
 		// this message is read when the window is closed
 		case WM_DESTROY:
 			// close the application entirely
@@ -307,7 +311,7 @@ LRESULT DXWindow::MsgProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	
 		default:
 			// Handle any messages the switch statement didn't
-			return DefWindowProc(hWnd, message, wParam, lParam);
+			return DefWindowProcW(hWnd, message, wParam, lParam);
 	}
 	return 0;
 }
@@ -321,6 +325,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	}
 	else
 	{
-		return DefWindowProc(hWnd, message, wParam, lParam);
+		return DefWindowProcW(hWnd, message, wParam, lParam);
 	}	
 }
