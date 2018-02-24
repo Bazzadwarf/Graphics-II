@@ -72,6 +72,7 @@ void DXWindow::SetUpWindow()
 	{
 		MessageBox(0, "Unable to create window", 0, 0);
 	}
+	InitialiseDirectX();
 	ShowWindow(_hWnd, _nCmdShow);
 	UpdateWindow(_hWnd);
 	ToggleRunning();
@@ -84,14 +85,8 @@ void DXWindow::SetUpDirectX()
 
 void DXWindow::InitialiseDirectX()
 {
-	if FAILED(CoInitializeEx(nullptr, COINIT_APARTMENTTHREADED))
-	{
-
-	}
-	if (!GetDeviceAndSwapChain())
-	{
-
-	}
+	CoInitializeEx(nullptr, COINIT_APARTMENTTHREADED);
+	GetDeviceAndSwapChain();
 	OnResize(WM_EXITSIZEMOVE);
 
 	// Create camera and projection matrices (we will look at how the 
@@ -235,14 +230,60 @@ void DXWindow::ToggleRunning()
 
 void DXWindow::Run()
 {
+	HACCEL hAccelTable = LoadAccelerators(_hInstance, MAKEINTRESOURCE(IDC_GRAPHICS2));
+	LARGE_INTEGER counterFrequency;
+	LARGE_INTEGER nextTime;
+	LARGE_INTEGER currentTime;
+	LARGE_INTEGER lastTime;
+	bool updateFlag = true;
+
+	// Initialise timer
+	QueryPerformanceFrequency(&counterFrequency);
+	DWORD msPerFrame = (DWORD)(counterFrequency.QuadPart / DEFAULT_FRAMERATE);
+	double timeFactor = 1.0 / counterFrequency.QuadPart;
+	QueryPerformanceCounter(&nextTime);
+	lastTime = nextTime;
+
+	_msg.message = WM_NULL;
 	while (this->_isAlive)
 	{
-		while (GetMessage(&_msg, NULL, 0, 0) > 0)
+		if (updateFlag)
 		{
-			TranslateMessage(&_msg);
-			DispatchMessage(&_msg);
+			QueryPerformanceCounter(&currentTime);
+			_timeSpan = (currentTime.QuadPart - lastTime.QuadPart) * timeFactor;
+			lastTime = currentTime;
+			//Update();
+			updateFlag = false;
+		}
+		QueryPerformanceCounter(&currentTime);
+
+		if (currentTime.QuadPart > nextTime.QuadPart)
+		{
+			Render();
+			nextTime.QuadPart += msPerFrame;
+			if (nextTime.QuadPart < currentTime.QuadPart)
+			{
+				nextTime.QuadPart = currentTime.QuadPart + msPerFrame;
+			}
+			updateFlag = true;
+		}
+		else
+		{
+			while (GetMessage(&_msg, NULL, 0, 0) > 0)
+			{	
+				TranslateMessage(&_msg);
+				DispatchMessage(&_msg);
+			}
 		}
 	}
+}
+
+void DXWindow::Render()
+{
+	const float clearColour[] = { 0.0f, 0.0f, 0.0f, 0.0f };
+	_deviceContext->ClearRenderTargetView(_renderTargetView.Get(), clearColour);
+	_deviceContext->ClearDepthStencilView(_depthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+	ThrowIfFailed(_swapChain->Present(0, 0));
 }
 
 LRESULT DXWindow::MsgProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
@@ -254,7 +295,7 @@ LRESULT DXWindow::MsgProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			_width = LOWORD(lParam);
 			_height = HIWORD(lParam);
 			OnResize(wParam);
-			//Render();
+			Render();
 			break;
 		
 		// this message is read when the window is closed

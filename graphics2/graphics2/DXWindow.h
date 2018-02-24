@@ -1,6 +1,6 @@
 #pragma once
 #include "Core.h"
-#include <vector>
+
 #define DEFAULT_FRAMERATE 60
 #define DEFAULT_WIDTH 640
 #define DEFAULT_HEIGHT 480
@@ -23,6 +23,7 @@ public:
 	void OnResize(WPARAM wParam);
 	void ToggleRunning();
 	void Run();
+	void Render();
 	
 	LRESULT MsgProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
@@ -31,10 +32,6 @@ public:
 		if (FAILED(hr))
 		{
 			throw exception();
-		}
-		else 
-		{
-
 		}
 	}
 
@@ -51,6 +48,8 @@ private:
 	unsigned int _width;
 	unsigned int _height;
 	bool		 _isAlive = false;
+
+	double _timeSpan;
 
 	ComPtr<ID3D11Device>			_device;
 	ComPtr<ID3D11DeviceContext>		_deviceContext;
