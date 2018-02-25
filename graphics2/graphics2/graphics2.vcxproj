@@ -116,13 +116,18 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Core.h" />
-    <ClInclude Include="DXWindow.h" />
+    <ClInclude Include="DXFramework.h" />
     <ClInclude Include="Framework.h" />
+    <ClInclude Include="MainProcessing.h" />
     <ClInclude Include="resource.h" />
+    <ClInclude Include="SceneGraph.h" />
+    <ClInclude Include="SceneNode.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="DXWindow.cpp" />
+    <ClCompile Include="DXFramework.cpp" />
     <ClCompile Include="Framework.cpp" />
+    <ClCompile Include="MainProcessing.cpp" />
+    <ClCompile Include="SceneGraph.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

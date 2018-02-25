@@ -9,7 +9,6 @@
 #include <DirectXColors.h>
 #include <wrl.h>
 #include "resource.h"
-#include <vector>
 
 #pragma comment(lib, "d3d11.lib")
 #pragma comment(lib, "d3dcompiler.lib")

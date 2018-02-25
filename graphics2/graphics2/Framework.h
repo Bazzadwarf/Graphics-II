@@ -1,5 +1,5 @@
 #pragma once
-#include "DXWindow.h"
+#include "DXFramework.h"
 
 class Framework
 {
@@ -14,7 +14,7 @@ public:
 	void Run();
 
 private:
-	DXWindow * _window = nullptr;
+	DXFramework * _window = nullptr;
 
 	HINSTANCE _hInstance;
 	HINSTANCE _hPrevInstance;

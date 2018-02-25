@@ -33,7 +33,7 @@ void Framework::Setup()
 {
 	if (_window == nullptr)
 	{
-		this->_window = new DXWindow(_hInstance, _hPrevInstance, _lpCmdLine, _nCmdShow);
+		this->_window = new DXFramework(_hInstance, _hPrevInstance, _lpCmdLine, _nCmdShow);
 		_window->SetUpWindow();
 		_window->Run();
 	}

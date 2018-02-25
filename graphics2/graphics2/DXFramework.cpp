@@ -1,36 +1,40 @@
-#include "DXWindow.h"
+#include "DXFramework.h"
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
-DXWindow * _thisWindow = NULL;
+DXFramework * _thisWindow = NULL;
 
-DXWindow::DXWindow()
+DXFramework::DXFramework()
 {
 }
 
-DXWindow::DXWindow(HINSTANCE & hInstance, HINSTANCE & hPrevInstance, LPSTR & lpCmdLine, int & nCmdShow)
+DXFramework::DXFramework(HINSTANCE & hInstance, HINSTANCE & hPrevInstance, LPSTR & lpCmdLine, int & nCmdShow)
 {
+	//Point to itself
 	_thisWindow = this;
 
+	//Set handlers and command line pointers
 	_hInstance = hInstance;
 	_hPrevInstance = hPrevInstance;
 	_lpCmdLine = lpCmdLine;
 	_nCmdShow = nCmdShow;
 
+	//Set base width and height of window
 	_width = DEFAULT_WIDTH;
 	_height = DEFAULT_HEIGHT;
 
+	//Set the position of the camera
 	_eyePosition = XMFLOAT4(0.0f, 1.0f, -15.0f, 0.0f);
 	_focalPointPosition = XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f);
 	_upVector = XMFLOAT4(0.0f, 1.0f, 0.0f, 0.0f);
 }
 
 
-DXWindow::~DXWindow()
+DXFramework::~DXFramework()
 {
 }
 
-void DXWindow::SetUpWindow()
+void DXFramework::SetUpWindow()
 {
 	// clear out the window class for use
 	ZeroMemory(&_wcex, sizeof(WNDCLASSEXW));
@@ -49,12 +53,14 @@ void DXWindow::SetUpWindow()
 	{
 		MessageBox(0, "Unable to register window class", 0, 0);
 	}
-
+	
+	//Set the size of the rectangle used for the window
 	RECT windowRect = { 0, 0, static_cast<LONG>(_width), static_cast<LONG>(_height) };
 	AdjustWindowRect(&windowRect, WS_OVERLAPPEDWINDOW, FALSE);
 	_width = windowRect.right - windowRect.left;
 	_height = windowRect.bottom - windowRect.top;
 
+	//Create window
 	_hWnd = CreateWindowExW(NULL,
 						   L"WindowClass1",    // name of the window class
 						   L"Graphics 2",   // title of the window
@@ -68,34 +74,51 @@ void DXWindow::SetUpWindow()
 						   _hInstance,    // application handle
 						   NULL);    // used with multiple windows, NULL
 
+	//Throw is failed
 	if (!_hWnd)
 	{
 		MessageBox(0, "Unable to create window", 0, 0);
 	}
+
+	//Initialse DirectX components
 	InitialiseDirectX();
+
+	//Display window
 	ShowWindow(_hWnd, _nCmdShow);
 	UpdateWindow(_hWnd);
+
+	//Set the running boolean to true
 	ToggleRunning();
 }
 
-void DXWindow::SetUpDirectX()
+void DXFramework::SetUpDirectX()
 {
+	//Initialise DirectX
 	_thisWindow->InitialiseDirectX();
 }
 
-void DXWindow::InitialiseDirectX()
+void DXFramework::InitialiseDirectX()
 {
+	//Initialise's the COM libary for use
 	CoInitializeEx(nullptr, COINIT_APARTMENTTHREADED);
+	
+	//Gets the decessary devices
 	GetDeviceAndSwapChain();
+
+	//Call OnResize once
 	OnResize(WM_EXITSIZEMOVE);
 
 	// Create camera and projection matrices (we will look at how the 
 	// camera matrix is created from vectors later)
 	XMStoreFloat4x4(&_viewTransformation, XMMatrixLookAtLH(XMLoadFloat4(&_eyePosition), XMLoadFloat4(&_focalPointPosition), XMLoadFloat4(&_upVector)));
 	XMStoreFloat4x4(&_projectionTransformation, XMMatrixPerspectiveFovLH(XM_PIDIV4, (float)_width / _height, 1.0f, 100.0f));
+
+	_sceneGraph = make_shared<SceneGraph>();
+	CreateSceneGraph();
+	_sceneGraph->Initialise();
 }
 
-bool DXWindow::GetDeviceAndSwapChain()
+bool DXFramework::GetDeviceAndSwapChain()
 {
 	UINT createDeviceFlags = 0;
 
@@ -108,24 +131,29 @@ bool DXWindow::GetDeviceAndSwapChain()
 	};
 	unsigned int totalDriverTypes = ARRAYSIZE(driverTypes);
 
+	//Set the ammount of feature levels
 	D3D_FEATURE_LEVEL featureLevels[] =
 	{
 		D3D_FEATURE_LEVEL_11_0
 	};
 	unsigned int totalFeatureLevels = ARRAYSIZE(featureLevels);
 
+	//Create the DirectX Swap Chain Description
 	DXGI_SWAP_CHAIN_DESC swapChainDesc = { 0 };
 	swapChainDesc.BufferCount = 1;
 	swapChainDesc.BufferDesc.Width = _width;
 	swapChainDesc.BufferDesc.Height = _height;
 	swapChainDesc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	
 	// Set the refresh rate to 0 and let DXGI determine the best option (refer to DXGI best practices)
 	swapChainDesc.BufferDesc.RefreshRate.Numerator = 0;
 	swapChainDesc.BufferDesc.RefreshRate.Denominator = 0;
 	swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
 	swapChainDesc.OutputWindow = _hWnd;
+	
 	// Start out windowed
 	swapChainDesc.Windowed = true;
+	
 	// Enable multi-sampling to give smoother lines (set to 1 if performance becomes an issue)
 	swapChainDesc.SampleDesc.Count = 4;
 	swapChainDesc.SampleDesc.Quality = 0;
@@ -161,7 +189,7 @@ bool DXWindow::GetDeviceAndSwapChain()
 	return true;
 }
 
-void DXWindow::OnResize(WPARAM wParam)
+void DXFramework::OnResize(WPARAM wParam)
 {
 	// Update view and projection matrices to allow for the window size change
 	XMStoreFloat4x4(&_viewTransformation, XMMatrixLookAtLH(XMLoadFloat4(&_eyePosition), XMLoadFloat4(&_focalPointPosition), XMLoadFloat4(&_upVector)));
@@ -223,13 +251,15 @@ void DXWindow::OnResize(WPARAM wParam)
 	_deviceContext->RSSetViewports(1, &viewPort);
 }
 
-void DXWindow::ToggleRunning()
+void DXFramework::ToggleRunning()
 {
+	//Switch state of isAlive
 	_isAlive = !_isAlive;
 }
 
-void DXWindow::Run()
+void DXFramework::Run()
 {
+	//Create necessarry variables
 	HACCEL hAccelTable = LoadAccelerators(_hInstance, MAKEINTRESOURCE(IDC_GRAPHICS2));
 	LARGE_INTEGER counterFrequency;
 	LARGE_INTEGER nextTime;
@@ -247,6 +277,7 @@ void DXWindow::Run()
 	_msg.message = WM_NULL;
 	while (this->_isAlive)
 	{
+		//Check for updates
 		if (updateFlag)
 		{
 			QueryPerformanceCounter(&currentTime);
@@ -257,6 +288,7 @@ void DXWindow::Run()
 		}
 		QueryPerformanceCounter(&currentTime);
 
+		//Check for inputs or Render()
 		if (currentTime.QuadPart > nextTime.QuadPart)
 		{
 			Render();
@@ -278,26 +310,55 @@ void DXWindow::Run()
 	}
 }
 
-void DXWindow::Render()
+void DXFramework::Render()
 {
+	//Clear background to black
 	const float clearColour[] = { 0.0f, 0.0f, 0.0f, 0.0f };
 	_deviceContext->ClearRenderTargetView(_renderTargetView.Get(), clearColour);
 	_deviceContext->ClearDepthStencilView(_depthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+	
+	//Code of rendering the Scene Graph
+	_sceneGraph->Render();
+
+	//Throw if failed
 	ThrowIfFailed(_swapChain->Present(0, 0));
 }
 
-LRESULT DXWindow::MsgProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+void DXFramework::Update()
+{
+	UpdateSceneGraph();
+	_sceneGraph->Update(XMMatrixIdentity());
+}
+
+void DXFramework::Shutdown()
+{
+	_sceneGraph->Shutown();
+	CoUninitialize();
+	ToggleRunning();
+}
+
+void DXFramework::CreateSceneGraph()
+{
+}
+
+void DXFramework::UpdateSceneGraph()
+{
+}
+
+LRESULT DXFramework::MsgProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	// sort through and find what code to run for the message given
 	switch (message)
 	{
+		//This message is read when the window is being resized
 		case WM_SIZE:
 			_width = LOWORD(lParam);
 			_height = HIWORD(lParam);
 			OnResize(wParam);
 			Render();
 			break;
-		
+
+		// This message is read when the window is being moved arround the screen
 		case WM_MOVING:
 			Render();
 			break;
@@ -305,7 +366,7 @@ LRESULT DXWindow::MsgProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		// this message is read when the window is closed
 		case WM_DESTROY:
 			// close the application entirely
-			ToggleRunning();
+			Shutdown();
 			PostQuitMessage(0);
 			break;
 	

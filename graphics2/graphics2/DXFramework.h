@@ -1,20 +1,21 @@
 #pragma once
 #include "Core.h"
+#include "SceneGraph.h"
 
 #define DEFAULT_FRAMERATE 60
 #define DEFAULT_WIDTH 640
 #define DEFAULT_HEIGHT 480
 #define MAX_LOADSTRING 100
 
-class DXWindow
+class DXFramework
 {
 public:
-	DXWindow();
-	DXWindow(HINSTANCE & hInstance,
+	DXFramework();
+	DXFramework(HINSTANCE & hInstance,
 			 HINSTANCE & hPrevInstance,
 			 LPSTR & lpCmdLine,
 			 int & nCmdShow);
-	~DXWindow();
+	~DXFramework();
 
 	void SetUpWindow();
 	void SetUpDirectX();
@@ -24,8 +25,18 @@ public:
 	void ToggleRunning();
 	void Run();
 	void Render();
+	void Update();
+	void Shutdown();
+
+	virtual void CreateSceneGraph();
+	virtual void UpdateSceneGraph();
 	
 	LRESULT MsgProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
+
+	inline SceneGraphPointer GetSceneGraph() { return _sceneGraph; };
+	inline ComPtr<ID3D11Device> GetDevice() { return _device; };
+	inline ComPtr<ID3D11DeviceContext> GetDeviceContext() { return _deviceContext; };
+
 
 	inline void ThrowIfFailed(HRESULT hr)
 	{
@@ -71,5 +82,7 @@ private:
 
 	XMFLOAT4X4						_viewTransformation;
 	XMFLOAT4X4						_projectionTransformation;
+
+	SceneGraphPointer				_sceneGraph;
 };
 
