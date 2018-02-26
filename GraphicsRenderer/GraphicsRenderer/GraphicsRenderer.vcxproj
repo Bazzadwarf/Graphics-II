@@ -20,8 +20,8 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
-    <ProjectGuid>{1BCF64FF-DDC1-44E2-9275-BDDA097ADAB5}</ProjectGuid>
-    <RootNamespace>graphics2</RootNamespace>
+    <ProjectGuid>{853DB044-D3E6-437F-9E97-406929105342}</ProjectGuid>
+    <RootNamespace>GraphicsRenderer</RootNamespace>
     <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -115,21 +115,17 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="Core.h" />
-    <ClInclude Include="CubeNode.h" />
-    <ClInclude Include="DXFramework.h" />
+    <ClInclude Include="DirectXCore.h" />
+    <ClInclude Include="DXWindow.h" />
     <ClInclude Include="Framework.h" />
-    <ClInclude Include="MainProcessing.h" />
-    <ClInclude Include="resource.h" />
-    <ClInclude Include="SceneGraph.h" />
-    <ClInclude Include="SceneNode.h" />
+    <ClInclude Include="Resource.h" />
+    <ClInclude Include="Window.h" />
+    <ClInclude Include="WindowsCore.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="CubeNode.cpp" />
-    <ClCompile Include="DXFramework.cpp" />
+    <ClCompile Include="DXWindow.cpp" />
     <ClCompile Include="Framework.cpp" />
-    <ClCompile Include="MainProcessing.cpp" />
-    <ClCompile Include="SceneGraph.cpp" />
+    <ClCompile Include="Window.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
