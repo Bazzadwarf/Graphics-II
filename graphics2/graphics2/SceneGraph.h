@@ -2,6 +2,7 @@
 #include "SceneNode.h"
 #include <vector>
 
+
 class SceneGraph : public SceneNode
 {
 public:
@@ -9,10 +10,10 @@ public:
 	SceneGraph(wstring name) : SceneNode(name) {};
 	~SceneGraph() {};
 
-	bool Initialise();
-	void Update(FXMMATRIX& currentWindow);
-	void Render();
-	void Shutown();
+	virtual bool Initialise();
+	virtual void Update(FXMMATRIX& currentWindow);
+	virtual void Render();
+	virtual void Shutdown();
 
 	void Add(SceneNodePointer node);
 	void Remove(SceneNodePointer node);

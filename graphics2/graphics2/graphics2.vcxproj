@@ -116,6 +116,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Core.h" />
+    <ClInclude Include="CubeNode.h" />
     <ClInclude Include="DXFramework.h" />
     <ClInclude Include="Framework.h" />
     <ClInclude Include="MainProcessing.h" />
@@ -124,6 +125,7 @@
     <ClInclude Include="SceneNode.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="CubeNode.cpp" />
     <ClCompile Include="DXFramework.cpp" />
     <ClCompile Include="Framework.cpp" />
     <ClCompile Include="MainProcessing.cpp" />

@@ -28,10 +28,12 @@ public:
 	void Update();
 	void Shutdown();
 
-	virtual void CreateSceneGraph();
-	virtual void UpdateSceneGraph();
+	virtual void CreateSceneGraph() {};
+	virtual void UpdateSceneGraph() {};
 	
 	LRESULT MsgProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
+
+	static DXFramework * GetDXFramework();
 
 	inline SceneGraphPointer GetSceneGraph() { return _sceneGraph; };
 	inline ComPtr<ID3D11Device> GetDevice() { return _device; };

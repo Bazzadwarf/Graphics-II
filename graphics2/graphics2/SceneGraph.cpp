@@ -15,7 +15,7 @@ void SceneGraph::Render()
 
 }
 
-void SceneGraph::Shutown()
+void SceneGraph::Shutdown()
 {
 
 }
@@ -42,3 +42,4 @@ SceneNodePointer SceneGraph::Find(wstring name)
 {
 	return SceneNodePointer();
 }
+

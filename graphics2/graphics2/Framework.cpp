@@ -8,8 +8,6 @@ int WINAPI WinMain(HINSTANCE hInstance,
 {	
 	Framework framework(hInstance, hPrevInstance, lpCmdLine, nCmdShow);
 	framework.Setup();
-	framework.Run();
-
 	return 1;
 }
 

@@ -332,17 +332,9 @@ void DXFramework::Update()
 
 void DXFramework::Shutdown()
 {
-	_sceneGraph->Shutown();
+	_sceneGraph->Shutdown();
 	CoUninitialize();
 	ToggleRunning();
-}
-
-void DXFramework::CreateSceneGraph()
-{
-}
-
-void DXFramework::UpdateSceneGraph()
-{
 }
 
 LRESULT DXFramework::MsgProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
@@ -375,6 +367,11 @@ LRESULT DXFramework::MsgProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPar
 			return DefWindowProcW(hWnd, message, wParam, lParam);
 	}
 	return 0;
+}
+
+DXFramework * DXFramework::GetDXFramework()
+{
+	return _thisWindow;
 }
 
 // this is the main message handler for the program
