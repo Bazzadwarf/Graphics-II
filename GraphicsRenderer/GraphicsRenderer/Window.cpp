@@ -84,12 +84,12 @@ LRESULT Window::MsgProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		_width = LOWORD(lParam);
 		_height = HIWORD(lParam);
 		OnResize(wParam);
-		Render();
+		this->Render();
 		break;
 
 		// This message is read when the window is being moved arround the screen
 	case WM_MOVING:
-		Render();
+		this->Render();
 		break;
 
 		// this message is read when the window is closed

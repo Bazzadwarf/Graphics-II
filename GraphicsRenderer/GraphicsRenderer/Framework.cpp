@@ -5,9 +5,9 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	LPSTR lpCmdLine,
 	int nCmdShow)
 {
-	DXWindow* dxWnd = new DXWindow(hInstance, hPrevInstance, lpCmdLine, nCmdShow);
-	dxWnd->InitialiseDirectX();
-	dxWnd->Run();
+	DXWindow dxWnd = DXWindow(hInstance, hPrevInstance, lpCmdLine, nCmdShow);
+	dxWnd.InitialiseDirectX();
+	dxWnd.Run();
 	return 1;
 }
 

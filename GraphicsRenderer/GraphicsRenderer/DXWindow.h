@@ -11,11 +11,11 @@ public:
 	void InitialiseDirectX();
 	void GetDeviceAndSwapChain();
 
-	virtual void OnResize(WPARAM wParam);
-	virtual void Run();
-	virtual void Render();
-	virtual void Update();
-	virtual void Shutdown();
+	void OnResize(WPARAM wParam);
+	void Run();
+	void Render();
+	void Update();
+	void Shutdown();
 
 	LRESULT MsgProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
