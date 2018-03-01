@@ -203,10 +203,13 @@ void DXWindow::Run()
 		}
 		else
 		{
-			while (GetMessage(&_msg, NULL, 0, 0) > 0)
+			if (PeekMessage(&_msg, 0, 0, 0, PM_REMOVE))
 			{
-				TranslateMessage(&_msg);
-				DispatchMessage(&_msg);
+				if (!TranslateAccelerator(_msg.hwnd, hAccelTable, &_msg))
+				{
+					TranslateMessage(&_msg);
+					DispatchMessage(&_msg);
+				}
 			}
 		}
 	}

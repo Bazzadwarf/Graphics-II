@@ -2,6 +2,8 @@
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
+Window * _thisWindow = NULL;
+
 Window::Window(HINSTANCE & hInstance, HINSTANCE & hPrevInstance, LPSTR & lpCmdLine, int & nCmdShow)
 {
 	//Set handlers and command line pointers
@@ -15,6 +17,8 @@ Window::Window(HINSTANCE & hInstance, HINSTANCE & hPrevInstance, LPSTR & lpCmdLi
 	_height = DEFAULT_HEIGHT;
 
 	this->SetUpWindow();
+
+	_thisWindow = this;
 }
 
 Window::~Window()
@@ -109,10 +113,11 @@ LRESULT Window::MsgProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 // this is the main message handler for the program
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-	Window* winPtr = (Window*)GetWindowLongPtrW(hWnd, GWLP_USERDATA);
-	if (winPtr != NULL)
+	//Window* winPtr = (Window)GetWindowLongPtr(hWnd, GWLP_USERDATA);
+	
+	if (_thisWindow != NULL)
 	{
-		return winPtr->MsgProc(hWnd, message, wParam, lParam);
+		return _thisWindow->MsgProc(hWnd, message, wParam, lParam);
 	}
 	else
 	{
