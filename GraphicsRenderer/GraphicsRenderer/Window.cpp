@@ -71,7 +71,7 @@ void Window::SetUpWindow()
 		MessageBox(0, "Unable to create window", 0, 0);
 	}
 
-	SetWindowLongPtrW(_hWnd, GWLP_USERDATA, (long)this);
+	//SetWindowLongPtrW(_hWnd, GWLP_USERDATA, (long)this);
 
 	//Display window
 	ShowWindow(_hWnd, _nCmdShow);
