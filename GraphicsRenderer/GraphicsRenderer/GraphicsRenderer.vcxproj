@@ -115,17 +115,28 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="CubeNode.h" />
     <ClInclude Include="DirectXCore.h" />
     <ClInclude Include="DXWindow.h" />
     <ClInclude Include="Framework.h" />
+    <ClInclude Include="HelperFunctions.h" />
     <ClInclude Include="Resource.h" />
+    <ClInclude Include="SceneGraph.h" />
+    <ClInclude Include="SceneNode.h" />
+    <ClInclude Include="WICTextureLoader.h" />
     <ClInclude Include="Window.h" />
     <ClInclude Include="WindowsCore.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="CubeNode.cpp" />
     <ClCompile Include="DXWindow.cpp" />
     <ClCompile Include="Framework.cpp" />
+    <ClCompile Include="SceneGraph.cpp" />
+    <ClCompile Include="WICTextureLoader.cpp" />
     <ClCompile Include="Window.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="shader.hlsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

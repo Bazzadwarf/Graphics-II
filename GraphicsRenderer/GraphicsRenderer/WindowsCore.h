@@ -3,5 +3,6 @@
 #include <string>
 #include <exception>
 #include <memory>
+#include "HelperFunctions.h"
 
 using namespace std;

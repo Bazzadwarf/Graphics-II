@@ -8,6 +8,10 @@ public:
 	DXWindow(HINSTANCE & hInstance, HINSTANCE & hPrevInstance, LPSTR & lpCmdLine, int & nCmdShow) : Window(hInstance, hPrevInstance, lpCmdLine, nCmdShow) {};
 	~DXWindow();
 
+	static DXWindow * GetDXFramework();
+	inline ComPtr<ID3D11Device> GetDevice() { return _device; }
+	inline ComPtr<ID3D11DeviceContext> GetDeviceContext() { return _deviceContext; }
+
 	void InitialiseDirectX();
 	void GetDeviceAndSwapChain();
 
@@ -18,14 +22,6 @@ public:
 	void Shutdown();
 
 	LRESULT MsgProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
-
-	inline void ThrowIfFailed(HRESULT hr)
-	{
-		if (FAILED(hr))
-		{
-			throw exception();
-		}
-	}
 
 private:
 	double _timeSpan;

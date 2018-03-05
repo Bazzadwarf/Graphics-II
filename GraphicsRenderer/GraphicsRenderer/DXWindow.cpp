@@ -1,11 +1,21 @@
 #include "DXWindow.h"
 
+DXWindow * _dxWindow = nullptr;
+
 DXWindow::~DXWindow()
 {
 }
 
+DXWindow * DXWindow::GetDXFramework()
+{
+	return _dxWindow;
+}
+
+
 void DXWindow::InitialiseDirectX()
 {
+	_dxWindow = this;
+
 	//Set the position of the camera
 	_eyePosition = XMFLOAT4(0.0f, 1.0f, -15.0f, 0.0f);
 	_focalPointPosition = XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f);
