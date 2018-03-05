@@ -1,6 +1,7 @@
 #pragma once
 #include "Window.h"
 #include "DirectXCore.h"
+#include "SceneGraph.h"
 
 class DXWindow : public Window
 {
@@ -22,6 +23,10 @@ public:
 	void Shutdown();
 
 	LRESULT MsgProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
+
+	virtual void CreateSceneGraph() {};
+	virtual void UpdateSceneGraph() {};
+	inline SceneGraphPointer GetSceneGraph() { return _sceneGraph; }
 
 private:
 	double _timeSpan;
@@ -46,5 +51,7 @@ private:
 
 	XMFLOAT4X4						_viewTransformation;
 	XMFLOAT4X4						_projectionTransformation;
+
+	SceneGraphPointer _sceneGraph;
 };
 

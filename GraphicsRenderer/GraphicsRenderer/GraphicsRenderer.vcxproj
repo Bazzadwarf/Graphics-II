@@ -123,6 +123,7 @@
     <ClInclude Include="DirectXCore.h" />
     <ClInclude Include="DXWindow.h" />
     <ClInclude Include="Framework.h" />
+    <ClInclude Include="Graphics.h" />
     <ClInclude Include="HelperFunctions.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="SceneGraph.h" />
@@ -135,6 +136,7 @@
     <ClCompile Include="CubeNode.cpp" />
     <ClCompile Include="DXWindow.cpp" />
     <ClCompile Include="Framework.cpp" />
+    <ClCompile Include="Graphics.cpp" />
     <ClCompile Include="SceneGraph.cpp" />
     <ClCompile Include="WICTextureLoader.cpp" />
     <ClCompile Include="Window.cpp" />
