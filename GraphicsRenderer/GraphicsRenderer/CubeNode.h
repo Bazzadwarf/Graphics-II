@@ -18,7 +18,7 @@ class CubeNode : public SceneNode
 	};
 
 public:
-	CubeNode(wstring name, XMFLOAT3 size, wchar_t* file) : SceneNode(name) { _size = size; _file = file; };
+	CubeNode(wstring name, XMFLOAT4 size, wchar_t* file) : SceneNode(name) { _size = size; _file = file; };
 	~CubeNode() {};
 	
 	virtual bool Initialise();
@@ -33,7 +33,7 @@ public:
 	void BuildTexture();
 
 private:
-	XMFLOAT3 _size;
+	XMFLOAT4 _size;
 	wchar_t* _file;
 
 	ComPtr<ID3D11Buffer>			_vertexBuffer;
