@@ -35,35 +35,35 @@ void CubeNode::BuildGeometryBuffers()
 	float negativeZ = (_size.z / -2);
 	Vertex vertices[] =
 	{
-		{ XMFLOAT4(negativeX, negativeY, positiveZ, 1.0f), XMFLOAT2(0.0f, 0.0f) },
-		{ XMFLOAT4(positiveX, negativeY, positiveZ, 1.0f), XMFLOAT2(0.0f, 1.0f) },
-		{ XMFLOAT4(negativeX, positiveY, positiveZ, 1.0f), XMFLOAT2(1.0f, 0.0f) },
-		{ XMFLOAT4(positiveX, positiveY, positiveZ, 1.0f), XMFLOAT2(1.0f, 1.0f) },
+		{ XMFLOAT3(negativeX, negativeY, positiveZ), XMFLOAT3(0.0f, 0.0f, 1.0f), XMFLOAT2(0.0f, 0.0f) },
+		{ XMFLOAT3(positiveX, negativeY, positiveZ), XMFLOAT3(0.0f, 0.0f, 1.0f), XMFLOAT2(0.0f, 1.0f) },
+		{ XMFLOAT3(negativeX, positiveY, positiveZ), XMFLOAT3(0.0f, 0.0f, 1.0f), XMFLOAT2(1.0f, 0.0f) },
+		{ XMFLOAT3(positiveX, positiveY, positiveZ), XMFLOAT3(0.0f, 0.0f, 1.0f), XMFLOAT2(1.0f, 1.0f) },
 
-		{ XMFLOAT4(negativeX, negativeY, negativeZ, 1.0f), XMFLOAT2(0.0f, 0.0f) },
-		{ XMFLOAT4(negativeX, positiveY, negativeZ, 1.0f), XMFLOAT2(0.0f, 1.0f) },
-		{ XMFLOAT4(positiveX, negativeY, negativeZ, 1.0f), XMFLOAT2(1.0f, 0.0f) },
-		{ XMFLOAT4(positiveX, positiveY, negativeZ, 1.0f), XMFLOAT2(1.0f, 1.0f) },
+		{ XMFLOAT3(negativeX, negativeY, negativeZ), XMFLOAT3(0.0f, 0.0f, -1.0f), XMFLOAT2(0.0f, 0.0f) },
+		{ XMFLOAT3(negativeX, positiveY, negativeZ), XMFLOAT3(0.0f, 0.0f, -1.0f), XMFLOAT2(0.0f, 1.0f) },
+		{ XMFLOAT3(positiveX, negativeY, negativeZ), XMFLOAT3(0.0f, 0.0f, -1.0f), XMFLOAT2(1.0f, 0.0f) },
+		{ XMFLOAT3(positiveX, positiveY, negativeZ), XMFLOAT3(0.0f, 0.0f, -1.0f), XMFLOAT2(1.0f, 1.0f) },
 
-		{ XMFLOAT4(negativeX, positiveY, negativeZ, 1.0f), XMFLOAT2(0.0f, 0.0f) },
-		{ XMFLOAT4(negativeX, positiveY, positiveZ, 1.0f), XMFLOAT2(0.0f, 1.0f) },
-		{ XMFLOAT4(positiveX, positiveY, negativeZ, 1.0f), XMFLOAT2(1.0f, 0.0f) },
-		{ XMFLOAT4(positiveX, positiveY, positiveZ, 1.0f), XMFLOAT2(1.0f, 1.0f) },
+		{ XMFLOAT3(negativeX, positiveY, negativeZ), XMFLOAT3(0.0f, 1.0f, 0.0f), XMFLOAT2(0.0f, 0.0f) },
+		{ XMFLOAT3(negativeX, positiveY, positiveZ), XMFLOAT3(0.0f, 1.0f, 0.0f), XMFLOAT2(0.0f, 1.0f) },
+		{ XMFLOAT3(positiveX, positiveY, negativeZ), XMFLOAT3(0.0f, 1.0f, 0.0f), XMFLOAT2(1.0f, 0.0f) },
+		{ XMFLOAT3(positiveX, positiveY, positiveZ), XMFLOAT3(0.0f, 1.0f, 0.0f), XMFLOAT2(1.0f, 1.0f) },
 
-		{ XMFLOAT4(negativeX, negativeY, negativeZ, 1.0f), XMFLOAT2(0.0f, 0.0f) },
-		{ XMFLOAT4(positiveX, negativeY, negativeZ, 1.0f), XMFLOAT2(0.0f, 1.0f) },
-		{ XMFLOAT4(negativeX, negativeY, positiveZ, 1.0f), XMFLOAT2(1.0f, 0.0f) },
-		{ XMFLOAT4(positiveX, negativeY, positiveZ, 1.0f), XMFLOAT2(1.0f, 1.0f) },
+		{ XMFLOAT3(negativeX, negativeY, negativeZ), XMFLOAT3(0.0f, -1.0f, 0.0f), XMFLOAT2(0.0f, 0.0f) },
+		{ XMFLOAT3(positiveX, negativeY, negativeZ), XMFLOAT3(0.0f, -1.0f, 0.0f), XMFLOAT2(0.0f, 1.0f) },
+		{ XMFLOAT3(negativeX, negativeY, positiveZ), XMFLOAT3(0.0f, -1.0f, 0.0f), XMFLOAT2(1.0f, 0.0f) },
+		{ XMFLOAT3(positiveX, negativeY, positiveZ), XMFLOAT3(0.0f, -1.0f, 0.0f), XMFLOAT2(1.0f, 1.0f) },
 
-		{ XMFLOAT4(positiveX, negativeY, negativeZ, 1.0f), XMFLOAT2(0.0f, 0.0f) },
-		{ XMFLOAT4(positiveX, positiveY, negativeZ, 1.0f), XMFLOAT2(0.0f, 1.0f) },
-		{ XMFLOAT4(positiveX, negativeY, positiveZ, 1.0f), XMFLOAT2(1.0f, 0.0f) },
-		{ XMFLOAT4(positiveX, positiveY, positiveZ, 1.0f), XMFLOAT2(1.0f, 1.0f) },
+		{ XMFLOAT3(positiveX, negativeY, negativeZ), XMFLOAT3(1.0f, 0.0f, 0.0f), XMFLOAT2(0.0f, 0.0f) },
+		{ XMFLOAT3(positiveX, positiveY, negativeZ), XMFLOAT3(1.0f, 0.0f, 0.0f), XMFLOAT2(0.0f, 1.0f) },
+		{ XMFLOAT3(positiveX, negativeY, positiveZ), XMFLOAT3(1.0f, 0.0f, 0.0f), XMFLOAT2(1.0f, 0.0f) },
+		{ XMFLOAT3(positiveX, positiveY, positiveZ), XMFLOAT3(1.0f, 0.0f, 0.0f), XMFLOAT2(1.0f, 1.0f) },
 
-		{ XMFLOAT4(negativeX, negativeY, negativeZ, 1.0f), XMFLOAT2(0.0f, 0.0f) },
-		{ XMFLOAT4(negativeX, negativeY, positiveZ, 1.0f), XMFLOAT2(0.0f, 1.0f) },
-		{ XMFLOAT4(negativeX, positiveY, negativeZ, 1.0f), XMFLOAT2(1.0f, 0.0f) },
-		{ XMFLOAT4(negativeX, positiveY, positiveZ, 1.0f), XMFLOAT2(1.0f, 1.0f) },
+		{ XMFLOAT3(negativeX, negativeY, negativeZ), XMFLOAT3(-1.0f, 0.0f, 0.0f), XMFLOAT2(0.0f, 0.0f) },
+		{ XMFLOAT3(negativeX, negativeY, positiveZ), XMFLOAT3(-1.0f, 0.0f, 0.0f), XMFLOAT2(0.0f, 1.0f) },
+		{ XMFLOAT3(negativeX, positiveY, negativeZ), XMFLOAT3(-1.0f, 0.0f, 0.0f), XMFLOAT2(1.0f, 0.0f) },
+		{ XMFLOAT3(negativeX, positiveY, positiveZ), XMFLOAT3(-1.0f, 0.0f, 0.0f), XMFLOAT2(1.0f, 1.0f) },
 	};
 
 	D3D11_BUFFER_DESC vertexBufferDescriptor;

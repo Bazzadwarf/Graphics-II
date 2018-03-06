@@ -7,18 +7,22 @@ class CubeNode : public SceneNode
 {
 	struct Vertex
 	{
-		XMFLOAT4 Position;
+		XMFLOAT3 Position;
+		XMFLOAT3 Normal;
 		XMFLOAT2 TextureCoordinate;
 	};
 
 	struct CBUFFER
 	{
-		XMMATRIX CompleteTransformation;
-		XMFLOAT4 AmbientColour;
+		XMMATRIX    CompleteTransformation;
+		XMMATRIX	WorldTransformation;
+		XMVECTOR    LightVector;
+		XMFLOAT4    LightColour;
+		XMFLOAT4    AmbientColour;
 	};
 
 public:
-	CubeNode(wstring name, XMFLOAT4 size, wchar_t file) : SceneNode(name) { _size = size; _file = &file; };
+	CubeNode(wstring name, XMFLOAT3 size, wchar_t file) : SceneNode(name) { _size = size; _file = &file; };
 	~CubeNode() {};
 	
 	virtual bool Initialise();
@@ -33,7 +37,7 @@ public:
 	void BuildTexture();
 
 private:
-	XMFLOAT4 _size;
+	XMFLOAT3 _size;
 	wchar_t* _file;
 
 	ComPtr<ID3D11Buffer>			_vertexBuffer;
