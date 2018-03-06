@@ -213,6 +213,7 @@ void DXWindow::Run()
 		}
 		else
 		{
+	
 			if (PeekMessage(&_msg, 0, 0, 0, PM_REMOVE))
 			{
 				if (!TranslateAccelerator(_msg.hwnd, hAccelTable, &_msg))

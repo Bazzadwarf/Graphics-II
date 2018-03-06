@@ -3,7 +3,9 @@
 void Graphics::CreateSceneGraph()
 {
 	SceneGraphPointer sceneGraph = GetSceneGraph();
-	CubeNode cube(L"aaaa" , XMFLOAT4(2, 2, 2, 2), L"Woodbox.bmp");
+	SceneNodePointer cube = make_shared<CubeNode>(L"cube", XMFLOAT4(4,4,4,1), wchar_t(L"texture.png"));
+	sceneGraph->Add(cube);
+	sceneGraph->Initialise();
 }
 
 void Graphics::UpdateSceneGraph()

@@ -12,14 +12,17 @@ bool CubeNode::Initialise()
 
 void CubeNode::Update(FXMMATRIX & currentWorldTransformation)
 {
+
 }
 
 void CubeNode::Render()
 {
+
 }
 
 void CubeNode::Shutdown()
 {
+
 }
 
 void CubeNode::BuildGeometryBuffers()

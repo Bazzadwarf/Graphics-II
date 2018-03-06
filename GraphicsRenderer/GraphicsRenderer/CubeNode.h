@@ -18,7 +18,7 @@ class CubeNode : public SceneNode
 	};
 
 public:
-	CubeNode(wstring name, XMFLOAT4 size, wchar_t* file) : SceneNode(name) { _size = size; _file = file; };
+	CubeNode(wstring name, XMFLOAT4 size, wchar_t file) : SceneNode(name) { _size = size; _file = &file; };
 	~CubeNode() {};
 	
 	virtual bool Initialise();
