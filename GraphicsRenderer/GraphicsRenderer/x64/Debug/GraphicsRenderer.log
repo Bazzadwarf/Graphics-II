@@ -1,5 +1,2 @@
-﻿  Graphics.cpp
-c:\users\bazza\documents\github\graphics-ii\graphicsrenderer\graphicsrenderer\graphics.cpp(6): warning C4302: '<function-style-cast>': truncation from 'const wchar_t *' to 'wchar_t'
-  CubeNode.cpp
-  Generating Code...
-  GraphicsRenderer.vcxproj -> C:\Users\bazza\Documents\GitHub\Graphics-II\GraphicsRenderer\x64\Debug\GraphicsRenderer.exe
+﻿  CubeNode.cpp
+  GraphicsRenderer.vcxproj -> C:\Users\100417638\Desktop\Graphics-II-master\GraphicsRenderer\x64\Debug\GraphicsRenderer.exe

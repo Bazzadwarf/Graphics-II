@@ -1,8 +1,17 @@
 #include "DXWindow.h"
+#include "Graphics.h"
 
 DXWindow * _dxWindow = nullptr;
 
 DXWindow::~DXWindow()
+{
+}
+
+void DXWindow::CreateSceneGraph()
+{
+}
+
+void DXWindow::UpdateSceneGraph()
 {
 }
 
@@ -35,7 +44,9 @@ void DXWindow::InitialiseDirectX()
 	XMStoreFloat4x4(&_viewTransformation, XMMatrixLookAtLH(XMLoadFloat4(&_eyePosition), XMLoadFloat4(&_focalPointPosition), XMLoadFloat4(&_upVector)));
 	XMStoreFloat4x4(&_projectionTransformation, XMMatrixPerspectiveFovLH(XM_PIDIV4, (float)_width / _height, 1.0f, 100.0f));
 
-	OnResize(WM_EXITSIZEMOVE);
+	_sceneGraph = make_shared<SceneGraph>();
+	this->CreateSceneGraph();
+	_sceneGraph->Initialise();
 }
 
 void DXWindow::GetDeviceAndSwapChain()
@@ -232,6 +243,8 @@ void DXWindow::Render()
 	const float clearColour[] = { 0.0f, 0.0f, 0.0f, 0.0f };
 	_deviceContext->ClearRenderTargetView(_renderTargetView.Get(), clearColour);
 	_deviceContext->ClearDepthStencilView(_depthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+
+	_sceneGraph->Render();
 
 	//Throw if failed
 	ThrowIfFailed(_swapChain->Present(0, 0));

@@ -17,7 +17,26 @@ void CubeNode::Update(FXMMATRIX & currentWorldTransformation)
 
 void CubeNode::Render()
 {
+	XMMATRIX combinedTransformation = XMLoadFloat4x4(&_worldTransformation) * XMLoadFloat4x4(&DXWindow::GetDXFramework()->GetViewTransformation()) * XMLoadFloat4x4(&DXWindow::GetDXFramework()->GetProjectionTransformation());
 
+	CBUFFER cBuffer;
+	cBuffer.CompleteTransformation = combinedTransformation;
+	cBuffer.WorldTransformation = XMLoadFloat4x4(&_worldTransformation);
+	cBuffer.AmbientColour = XMFLOAT4(0.1f, 0.1f, 0.1f, 1.0f);
+	cBuffer.LightVector = XMVector4Normalize(XMVectorSet(0.0f, 01.0f, 1.0f, 0.0f));
+	cBuffer.LightColour = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+
+	DXWindow::GetDXFramework()->GetDeviceContext()->VSSetConstantBuffers(0, 1, _constantBuffer.GetAddressOf());
+	DXWindow::GetDXFramework()->GetDeviceContext()->UpdateSubresource(_constantBuffer.Get(), 0, 0, &cBuffer, 0, 0);
+
+	DXWindow::GetDXFramework()->GetDeviceContext()->PSSetShaderResources(0, 1, _texture.GetAddressOf());
+
+	UINT stride = sizeof(Vertex);
+	UINT offset = 0;
+	DXWindow::GetDXFramework()->GetDeviceContext()->IASetVertexBuffers(0, 1, _vertexBuffer.GetAddressOf(), &stride, &offset);
+	DXWindow::GetDXFramework()->GetDeviceContext()->IASetIndexBuffer(_indexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
+	DXWindow::GetDXFramework()->GetDeviceContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	DXWindow::GetDXFramework()->GetDeviceContext()->DrawIndexed(36, 0, 0);
 }
 
 void CubeNode::Shutdown()
@@ -159,7 +178,8 @@ void CubeNode::BuildVertexLayout()
 	D3D11_INPUT_ELEMENT_DESC vertexDesc[] =
 	{
 		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "TEXCOORD",   0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 }
+		{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 24, D3D11_INPUT_PER_VERTEX_DATA, 0 }
 	};
 
 	ThrowIfFailed(DXWindow::GetDXFramework()->GetDevice()->CreateInputLayout(vertexDesc, ARRAYSIZE(vertexDesc), _vertexShaderByteCode->GetBufferPointer(), _vertexShaderByteCode->GetBufferSize(), _layout.GetAddressOf()));
@@ -186,7 +206,7 @@ void CubeNode::BuildTexture()
 	// the following call will throw an exception
 	ThrowIfFailed(CreateWICTextureFromFile(DXWindow::GetDXFramework()->GetDevice().Get(),
 		DXWindow::GetDXFramework()->GetDeviceContext().Get(),
-	    _file,
+		L"woodbox.bmp",
 		nullptr,
 		_texture.GetAddressOf()
 	));

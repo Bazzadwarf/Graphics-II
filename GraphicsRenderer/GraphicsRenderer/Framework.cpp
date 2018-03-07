@@ -1,11 +1,12 @@
 #include "Framework.h"
+#include "Graphics.h"
 
 int WINAPI WinMain(HINSTANCE hInstance,
 	HINSTANCE hPrevInstance,
 	LPSTR lpCmdLine,
 	int nCmdShow)
 {
-	DXWindow dxWnd = DXWindow(hInstance, hPrevInstance, lpCmdLine, nCmdShow);
+	Graphics dxWnd = Graphics(hInstance, hPrevInstance, lpCmdLine, nCmdShow);
 	dxWnd.InitialiseDirectX();
 	dxWnd.Run();
 	return 1;

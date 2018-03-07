@@ -9,6 +9,9 @@ public:
 	DXWindow(HINSTANCE & hInstance, HINSTANCE & hPrevInstance, LPSTR & lpCmdLine, int & nCmdShow) : Window(hInstance, hPrevInstance, lpCmdLine, nCmdShow) {};
 	~DXWindow();
 
+	virtual void CreateSceneGraph();
+	virtual void UpdateSceneGraph();
+
 	static DXWindow * GetDXFramework();
 	inline ComPtr<ID3D11Device> GetDevice() { return _device; }
 	inline ComPtr<ID3D11DeviceContext> GetDeviceContext() { return _deviceContext; }
@@ -24,9 +27,11 @@ public:
 
 	LRESULT MsgProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
-	virtual void CreateSceneGraph() {};
-	virtual void UpdateSceneGraph() {};
+	
 	inline SceneGraphPointer GetSceneGraph() { return _sceneGraph; }
+
+	inline XMFLOAT4X4 GetViewTransformation() { return _viewTransformation; }
+	inline XMFLOAT4X4 GetProjectionTransformation() { return _projectionTransformation; }
 
 private:
 	double _timeSpan;
