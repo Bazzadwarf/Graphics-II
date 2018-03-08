@@ -252,6 +252,8 @@ void DXWindow::Render()
 
 void DXWindow::Update()
 {
+	this->UpdateSceneGraph();
+	_sceneGraph->Update();
 }
 
 void DXWindow::Shutdown()

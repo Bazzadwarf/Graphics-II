@@ -17,11 +17,11 @@ void CubeNode::Update(FXMMATRIX & currentWorldTransformation)
 
 void CubeNode::Render()
 {
-	XMMATRIX combinedTransformation = XMLoadFloat4x4(&_worldTransformation) * XMLoadFloat4x4(&DXWindow::GetDXFramework()->GetViewTransformation()) * XMLoadFloat4x4(&DXWindow::GetDXFramework()->GetProjectionTransformation());
+	XMMATRIX combinedTransformation = XMLoadFloat4x4(&_localTransformation) * XMLoadFloat4x4(&DXWindow::GetDXFramework()->GetViewTransformation()) * XMLoadFloat4x4(&DXWindow::GetDXFramework()->GetProjectionTransformation());
 
 	CBUFFER cBuffer;
 	cBuffer.CompleteTransformation = combinedTransformation;
-	cBuffer.WorldTransformation = XMLoadFloat4x4(&_worldTransformation);
+	cBuffer.WorldTransformation = XMLoadFloat4x4(&_localTransformation);
 	cBuffer.AmbientColour = XMFLOAT4(0.1f, 0.1f, 0.1f, 1.0f);
 	cBuffer.LightVector = XMVector4Normalize(XMVectorSet(0.0f, 01.0f, 1.0f, 0.0f));
 	cBuffer.LightColour = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
@@ -199,6 +199,7 @@ void CubeNode::BuildConstantBuffer()
 
 void CubeNode::BuildTexture()
 {
+	const wchar_t* name = _file.c_str();
 	// Note that in order to use CreateWICTextureFromFile, we 
 	// need to ensure we make a call to CoInitializeEx in our 
 	// Initialise method (and make the corresponding call to 
@@ -206,7 +207,7 @@ void CubeNode::BuildTexture()
 	// the following call will throw an exception
 	ThrowIfFailed(CreateWICTextureFromFile(DXWindow::GetDXFramework()->GetDevice().Get(),
 		DXWindow::GetDXFramework()->GetDeviceContext().Get(),
-		L"woodbox.bmp",
+		name,
 		nullptr,
 		_texture.GetAddressOf()
 	));
