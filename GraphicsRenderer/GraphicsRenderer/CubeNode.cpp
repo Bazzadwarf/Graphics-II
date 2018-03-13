@@ -3,12 +3,16 @@
 bool CubeNode::Initialise()
 {
 	_dxframework = DXWindow::GetDXFramework();
-	BuildGeometryBuffers();
-	BuildShaders();
-	BuildVertexLayout();
-	BuildConstantBuffer();
-	BuildTexture();
-	return true;
+	if (_dxframework != nullptr)
+	{
+		BuildGeometryBuffers();
+		BuildShaders();
+		BuildVertexLayout();
+		BuildConstantBuffer();
+		BuildTexture();
+		return true;
+	}
+	return false;
 }
 
 void CubeNode::Update(FXMMATRIX & currentWorldTransformation)
