@@ -37,6 +37,8 @@ public:
 	void BuildTexture();
 
 private:
+
+	DXWindow * _dxframework;
 	XMFLOAT3 _size;
 	wstring _file;
 
