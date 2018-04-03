@@ -11,5 +11,8 @@ public:
 
 	void CreateSceneGraph();
 	void UpdateSceneGraph();
+
+private:
+	float _rotationAngle;
 };
 

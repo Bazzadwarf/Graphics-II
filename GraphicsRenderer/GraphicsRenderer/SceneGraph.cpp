@@ -47,5 +47,21 @@ void SceneGraph::Remove(SceneNodePointer node)
 
 SceneNodePointer SceneGraph::Find(wstring name)
 {
-	return SceneNodePointer();
+	if (name == _name)
+	{
+		return shared_from_this();
+	}
+	else
+	{
+		for (size_t i = 0; i < _children.size(); i++)
+		{
+			if (_children.at(i)->Find(name) != nullptr)
+			{
+				return _children.at(i)->Find(name);
+			}
+		}
+	}
+	
+	//Something has to of gone wrong to get here
+	return nullptr;
 }

@@ -3,8 +3,8 @@
 #include "Resource.h"
 
 #define DEFAULT_FRAMERATE 60
-#define DEFAULT_WIDTH 640
-#define DEFAULT_HEIGHT 480
+#define DEFAULT_WIDTH 1280
+#define DEFAULT_HEIGHT 720
 #define MAX_LOADSTRING 100
 
 class Window

@@ -12,5 +12,7 @@ void Graphics::CreateSceneGraph()
 
 void Graphics::UpdateSceneGraph()
 {
+	_rotationAngle += 1.0f;
 	SceneGraphPointer sceneGraph = GetSceneGraph();
+	sceneGraph->Find(L"cube")->SetLocalTransform(XMMatrixRotationAxis(XMVectorSet(1.0f, 1.0f, 1.0f, 0.0f), _rotationAngle * 0.5f * XM_PI / 180.0f));
 }
