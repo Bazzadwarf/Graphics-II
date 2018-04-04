@@ -2,6 +2,7 @@
 #include "Window.h"
 #include "DirectXCore.h"
 #include "SceneGraph.h"
+#include "ResourceManager.h"
 
 class DXWindow : public Window
 {
@@ -32,6 +33,7 @@ public:
 
 	inline XMFLOAT4X4 GetViewTransformation() { return _viewTransformation; }
 	inline XMFLOAT4X4 GetProjectionTransformation() { return _projectionTransformation; }
+	inline shared_ptr<ResourceManager> GetResourceManager() { return _resourceManager; }
 
 private:
 	double _timeSpan;
@@ -56,6 +58,8 @@ private:
 
 	XMFLOAT4X4						_viewTransformation;
 	XMFLOAT4X4						_projectionTransformation;
+
+	shared_ptr<ResourceManager>		_resourceManager;
 
 	SceneGraphPointer _sceneGraph;
 };

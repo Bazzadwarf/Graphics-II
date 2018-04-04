@@ -44,6 +44,8 @@ void DXWindow::InitialiseDirectX()
 	XMStoreFloat4x4(&_viewTransformation, XMMatrixLookAtLH(XMLoadFloat4(&_eyePosition), XMLoadFloat4(&_focalPointPosition), XMLoadFloat4(&_upVector)));
 	XMStoreFloat4x4(&_projectionTransformation, XMMatrixPerspectiveFovLH(XM_PIDIV4, (float)_width / _height, 1.0f, 100.0f));
 
+	_resourceManager = make_shared<ResourceManager>();
+
 	_sceneGraph = make_shared<SceneGraph>();
 	this->CreateSceneGraph();
 	_sceneGraph->Initialise();

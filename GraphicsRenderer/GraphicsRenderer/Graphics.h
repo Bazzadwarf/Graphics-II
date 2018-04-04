@@ -1,6 +1,7 @@
 #pragma once
 #include "DXWindow.h"
 #include "CubeNode.h"
+#include "MeshNode.h"
 
 class Graphics : public DXWindow
 {
