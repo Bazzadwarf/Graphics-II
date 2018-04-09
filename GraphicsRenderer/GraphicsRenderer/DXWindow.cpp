@@ -26,7 +26,7 @@ void DXWindow::InitialiseDirectX()
 	_dxWindow = this;
 
 	//Set the position of the camera
-	_eyePosition = XMFLOAT4(0.0f, 1.0f, -15.0f, 0.0f);
+	_eyePosition = XMFLOAT4(0.0f, 50.0f, -500.0f, 0.0f);
 	_focalPointPosition = XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f);
 	_upVector = XMFLOAT4(0.0f, 1.0f, 0.0f, 0.0f);
 
@@ -42,7 +42,7 @@ void DXWindow::InitialiseDirectX()
 	// Create camera and projection matrices (we will look at how the 
 	// camera matrix is created from vectors later)
 	XMStoreFloat4x4(&_viewTransformation, XMMatrixLookAtLH(XMLoadFloat4(&_eyePosition), XMLoadFloat4(&_focalPointPosition), XMLoadFloat4(&_upVector)));
-	XMStoreFloat4x4(&_projectionTransformation, XMMatrixPerspectiveFovLH(XM_PIDIV4, (float)_width / _height, 1.0f, 100.0f));
+	XMStoreFloat4x4(&_projectionTransformation, XMMatrixPerspectiveFovLH(XM_PIDIV4, (float)_width / _height, 1.0f, 10000.0f));
 
 	_resourceManager = make_shared<ResourceManager>();
 
@@ -124,7 +124,7 @@ void DXWindow::OnResize(WPARAM wParam)
 {
 	// Update view and projection matrices to allow for the window size change
 	XMStoreFloat4x4(&_viewTransformation, XMMatrixLookAtLH(XMLoadFloat4(&_eyePosition), XMLoadFloat4(&_focalPointPosition), XMLoadFloat4(&_upVector)));
-	XMStoreFloat4x4(&_projectionTransformation, XMMatrixPerspectiveFovLH(XM_PIDIV4, (float)_width / _height, 1.0f, 100.0f));
+	XMStoreFloat4x4(&_projectionTransformation, XMMatrixPerspectiveFovLH(XM_PIDIV4, (float)_width / _height, 1.0f, 10000.0f));
 
 	// We only want to resize the buffers when the user has 
 	// finished dragging the window to the new size.  Windows

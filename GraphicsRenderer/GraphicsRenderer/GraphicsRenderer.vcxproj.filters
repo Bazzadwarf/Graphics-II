@@ -69,6 +69,9 @@
     <ClInclude Include="MeshNode.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="TerrainNode.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Framework.cpp">
@@ -104,9 +107,15 @@
     <ClCompile Include="MeshNode.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="TerrainNode.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="TexturedShaders.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="TerrainShader.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
   </ItemGroup>

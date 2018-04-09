@@ -2,6 +2,7 @@
 #include "DXWindow.h"
 #include "CubeNode.h"
 #include "MeshNode.h"
+#include "TerrainNode.h"
 
 class Graphics : public DXWindow
 {
