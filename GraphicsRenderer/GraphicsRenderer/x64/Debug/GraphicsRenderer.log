@@ -1,4 +1,9 @@
-﻿  compilation object save succeeded; see C:\Users\bazza\Documents\GitHub\Graphics-II\GraphicsRenderer\x64\Debug\TerrainShader.cso
+﻿  TerrainNode.cpp
+c:\users\bazza\documents\github\graphics-ii\graphicsrenderer\graphicsrenderer\terrainnode.cpp(20): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+c:\users\bazza\documents\github\graphics-ii\graphicsrenderer\graphicsrenderer\terrainnode.cpp(21): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+c:\users\bazza\documents\github\graphics-ii\graphicsrenderer\graphicsrenderer\terrainnode.cpp(22): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+c:\users\bazza\documents\github\graphics-ii\graphicsrenderer\graphicsrenderer\terrainnode.cpp(99): warning C4267: '=': conversion from 'size_t' to 'UINT', possible loss of data
+c:\users\bazza\documents\github\graphics-ii\graphicsrenderer\graphicsrenderer\terrainnode.cpp(112): warning C4267: '=': conversion from 'size_t' to 'UINT', possible loss of data
   GraphicsRenderer.vcxproj -> C:\Users\bazza\Documents\GitHub\Graphics-II\GraphicsRenderer\x64\Debug\GraphicsRenderer.exe
   C:\Users\bazza\Documents\GitHub\Graphics-II\GraphicsRenderer\GraphicsRenderer\assimp-vc140-mt.dll
   C:\Users\bazza\Documents\GitHub\Graphics-II\GraphicsRenderer\GraphicsRenderer\zlib.dll
