@@ -25,10 +25,10 @@ SamplerState ss
 
 struct VertexShaderInput
 {
-	float3 Position : POSITION;
-	float3 Normal : NORMAL;
-	float2 TexCoord : TEXCOORD0;
-	float2 BlendMapTexCoord : TEXCOORD1;
+	float3 Position : Position;
+	float3 Normal : Normal;
+	float2 TexCoord : TexCoord;
+	float2 BlendMapTexCoord : BlendMapTexCoord;
 };
 
 struct PixelShaderInput
