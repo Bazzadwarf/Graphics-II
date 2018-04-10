@@ -46,10 +46,10 @@ bool TerrainNode::Initialise()
 
 			//Triangle 1 v2
 			_indices.push_back((square * 4) + 1);		//Get the 2nd vertex in the square for the 1st triangle
-
+			
 			//Triangle 1 v3
 			_indices.push_back((square * 4) + 2);		//Get the 3rd vertex in the square for the 1st triangle
-
+														
 			//Triangle 2 v3
 			_indices.push_back((square * 4) + 2);		//Get the 3rd vertex in the square for the 2nd triangle
 
@@ -84,8 +84,34 @@ bool TerrainNode::Initialise()
 
 void TerrainNode::Render()
 {
-	_dxframework->GetDeviceContext()->RSSetState(_wireframeRasteriserState.Get());
-	//Draw indexed
+	XMFLOAT4X4 projectionTransformation = DXWindow::GetDXFramework()->GetProjectionTransformation();
+	XMFLOAT4X4 viewTransformation = DXWindow::GetDXFramework()->GetViewTransformation();
+
+	XMMATRIX completeTransformation = XMLoadFloat4x4(&_worldTransformation) * XMLoadFloat4x4(&viewTransformation) * XMLoadFloat4x4(&projectionTransformation);
+	
+	CBUFFER cBuffer;
+	cBuffer.completeTransformation = completeTransformation;
+	cBuffer.worldTransformation = XMLoadFloat4x4(&_localTransformation);
+	cBuffer.cameraPosition = XMFLOAT4(0.0f, 50.0f, -500.0f, 0.0f);
+	cBuffer.lightVector = XMVector4Normalize(XMVectorSet(0.0f, 01.0f, 1.0f, 0.0f));
+	cBuffer.lightColor = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+	cBuffer.ambientColor = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+	cBuffer.diffuseColor = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+	cBuffer.specularColor = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+	cBuffer.shininess = 1;
+
+	_dxframework->GetDeviceContext()->VSSetShader(_vertexShader.Get(), 0, 0);
+	_dxframework->GetDeviceContext()->PSSetShader(_pixelShader.Get(), 0, 0);
+	_dxframework->GetDeviceContext()->IASetInputLayout(_layout.Get());
+
+	UINT stride = sizeof(VERTEX);
+	UINT offset = 0;
+	_dxframework->GetDeviceContext()->IASetVertexBuffers(0, 1, _vertexBuffer.GetAddressOf(), &stride, &offset);
+	_dxframework->GetDeviceContext()->IASetIndexBuffer(_indexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
+	_dxframework->GetDeviceContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	_dxframework->GetDeviceContext()->VSSetConstantBuffers(0, 1, _constantBuffer.GetAddressOf());
+
+	_dxframework->GetDeviceContext()->RSSetState(_wireframeRasteriserState.Get());	_dxframework->GetDeviceContext()->DrawIndexed(static_cast<UINT>(_indices.size()), 0, 0);	_dxframework->GetDeviceContext()->RSSetState(_defaultRasteriserState.Get());
 }
 
 void TerrainNode::Shutdown()
@@ -187,7 +213,6 @@ void TerrainNode::BuildVertexLayout()
 	{ "TexCoord", 0,    DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 	{ "BlendMapTexCoord", 0,    DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 }
 	};
-
 	ThrowIfFailed(_dxframework->GetDevice()->CreateInputLayout(vertexDesc, ARRAYSIZE(vertexDesc), _vertexShaderByteCode->GetBufferPointer(), _vertexShaderByteCode->GetBufferSize(), _layout.GetAddressOf()));
 }
 
