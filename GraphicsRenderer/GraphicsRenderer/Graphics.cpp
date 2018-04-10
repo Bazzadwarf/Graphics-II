@@ -8,7 +8,7 @@ void Graphics::CreateSceneGraph()
 
 	shared_ptr<MeshNode> node = make_shared<MeshNode>(L"Plane1", L"airplane.x");
 	node->Update(XMMatrixTranslation(0, 0, -10.0f));
-	sceneGraph->Add(node);
+	//sceneGraph->Add(node);
 
 	shared_ptr<TerrainNode> terrain = make_shared<TerrainNode>(L"Terrain", L"Terrain.png");
 	sceneGraph->Add(terrain);

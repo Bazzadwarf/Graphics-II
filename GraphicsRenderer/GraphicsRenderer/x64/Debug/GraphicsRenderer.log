@@ -1,15 +1,11 @@
 ﻿  TerrainNode.cpp
-d:\graphics-ii\graphicsrenderer\graphicsrenderer\terrainnode.cpp(29): warning C4267: 'argument': conversion from 'size_t' to 'UINT', possible loss of data
-d:\graphics-ii\graphicsrenderer\graphicsrenderer\terrainnode.cpp(30): warning C4267: 'argument': conversion from 'size_t' to 'UINT', possible loss of data
-d:\graphics-ii\graphicsrenderer\graphicsrenderer\terrainnode.cpp(31): warning C4267: 'argument': conversion from 'size_t' to 'UINT', possible loss of data
-d:\graphics-ii\graphicsrenderer\graphicsrenderer\terrainnode.cpp(32): warning C4267: 'argument': conversion from 'size_t' to 'UINT', possible loss of data
-d:\graphics-ii\graphicsrenderer\graphicsrenderer\terrainnode.cpp(33): warning C4267: 'argument': conversion from 'size_t' to 'UINT', possible loss of data
-d:\graphics-ii\graphicsrenderer\graphicsrenderer\terrainnode.cpp(34): warning C4267: 'argument': conversion from 'size_t' to 'UINT', possible loss of data
-d:\graphics-ii\graphicsrenderer\graphicsrenderer\terrainnode.cpp(77): warning C4267: 'argument': conversion from 'size_t' to 'UINT', possible loss of data
-d:\graphics-ii\graphicsrenderer\graphicsrenderer\terrainnode.cpp(88): warning C4267: '=': conversion from 'size_t' to 'UINT', possible loss of data
-d:\graphics-ii\graphicsrenderer\graphicsrenderer\terrainnode.cpp(101): warning C4267: '=': conversion from 'size_t' to 'UINT', possible loss of data
-  GraphicsRenderer.vcxproj -> D:\Graphics-II\GraphicsRenderer\x64\Debug\GraphicsRenderer.exe
-  D:\Graphics-II\GraphicsRenderer\GraphicsRenderer\assimp-vc140-mt.dll
-  D:\Graphics-II\GraphicsRenderer\GraphicsRenderer\zlib.dll
+c:\users\100417638\desktop\graphics-ii-master\graphicsrenderer\graphicsrenderer\terrainnode.cpp(20): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+c:\users\100417638\desktop\graphics-ii-master\graphicsrenderer\graphicsrenderer\terrainnode.cpp(21): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+c:\users\100417638\desktop\graphics-ii-master\graphicsrenderer\graphicsrenderer\terrainnode.cpp(22): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+c:\users\100417638\desktop\graphics-ii-master\graphicsrenderer\graphicsrenderer\terrainnode.cpp(97): warning C4267: '=': conversion from 'size_t' to 'UINT', possible loss of data
+c:\users\100417638\desktop\graphics-ii-master\graphicsrenderer\graphicsrenderer\terrainnode.cpp(110): warning C4267: '=': conversion from 'size_t' to 'UINT', possible loss of data
+  GraphicsRenderer.vcxproj -> C:\Users\100417638\Desktop\Graphics-II-master\GraphicsRenderer\x64\Debug\GraphicsRenderer.exe
+  C:\Users\100417638\Desktop\Graphics-II-master\GraphicsRenderer\GraphicsRenderer\assimp-vc140-mt.dll
+  C:\Users\100417638\Desktop\Graphics-II-master\GraphicsRenderer\GraphicsRenderer\zlib.dll
           2 file(s) copied.
           1 file(s) copied.

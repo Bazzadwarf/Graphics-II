@@ -2,11 +2,18 @@
 #include "SceneNode.h"
 #include "DXWindow.h"
 #include "WICTextureLoader.h"
-#include "ResourceManager.h"
 #include <vector>
 
 class TerrainNode : public SceneNode
 {
+	struct VERTEX
+	{
+		XMFLOAT3 Position;
+		XMFLOAT3 Normal;
+		XMFLOAT2 TexCoord;
+		XMFLOAT2 BlendMapTexCoord;
+	};
+	
 	struct CBUFFER
 	{
 		XMMATRIX completeTransformation;
@@ -30,32 +37,35 @@ public:
 	void Shutdown();
 
 	void BuildGeometryBuffers();
+	void BuildConstantBuffer();
 	void BuildShaders();
 	void BuildVertexLayout();
-	void BuildConstantBuffer();
 
 	void BuildRendererStates();
 
-private:
+private:	
 	DXWindow * _dxframework;
 	
 	wstring _file;
 
 	vector<VERTEX> _vertices;
 	vector<UINT> _indices;
+
+	int _gridSize = 256;
+
 	ComPtr<ID3D11Buffer> _vertexBuffer;
 	ComPtr<ID3D11Buffer> _indexBuffer;
 
-	ComPtr<ID3D11RasterizerState> _defaultRasteriserState;
-	ComPtr<ID3D11RasterizerState> _wireframeRasteriserState;
+	ComPtr<ID3D11Buffer>			_constantBuffer;
 
 	ComPtr<ID3DBlob>				_vertexShaderByteCode = nullptr;
-	ComPtr<ID3D11VertexShader>		_vertexShader;
 	ComPtr<ID3DBlob>				_pixelShaderByteCode = nullptr;
+	ComPtr<ID3D11VertexShader>		_vertexShader;
 	ComPtr<ID3D11PixelShader>		_pixelShader;
 
 	ComPtr<ID3D11InputLayout>		_layout;
 
-	ComPtr<ID3D11Buffer>			_constantBuffer;
+	ComPtr<ID3D11RasterizerState> _defaultRasteriserState;
+	ComPtr<ID3D11RasterizerState> _wireframeRasteriserState;
 };
 
