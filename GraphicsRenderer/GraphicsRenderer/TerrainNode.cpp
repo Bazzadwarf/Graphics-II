@@ -111,7 +111,10 @@ void TerrainNode::Render()
 	_dxframework->GetDeviceContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	_dxframework->GetDeviceContext()->VSSetConstantBuffers(0, 1, _constantBuffer.GetAddressOf());
 
-	_dxframework->GetDeviceContext()->RSSetState(_wireframeRasteriserState.Get());	_dxframework->GetDeviceContext()->DrawIndexed(static_cast<UINT>(_indices.size()), 0, 0);	_dxframework->GetDeviceContext()->RSSetState(_defaultRasteriserState.Get());
+	_dxframework->GetDeviceContext()->RSSetState(_wireframeRasteriserState.Get());
+	_dxframework->GetDeviceContext()->DrawIndexed(static_cast<UINT>(_indices.size()), 0, 0);
+	_dxframework->GetDeviceContext()->RSSetState(_defaultRasteriserState.Get());
+
 }
 
 void TerrainNode::Shutdown()
