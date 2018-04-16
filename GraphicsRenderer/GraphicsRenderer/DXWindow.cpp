@@ -48,7 +48,6 @@ void DXWindow::InitialiseDirectX()
 
 	_sceneGraph = make_shared<SceneGraph>();
 	this->CreateSceneGraph();
-	_sceneGraph->Initialise();
 }
 
 void DXWindow::GetDeviceAndSwapChain()

@@ -5,7 +5,7 @@ bool TerrainNode::Initialise()
 	_dxframework = DXWindow::GetDXFramework();
 	
 	//1. Load the height map
-
+	LoadHeightMap(_file);
 	//2. Generate the vertices and indices for the polygongs in the terrain grid
 	
 	VERTEX tempVertex;
@@ -32,11 +32,11 @@ bool TerrainNode::Initialise()
 			_vertices.push_back(tempVertex);
 
 			//bottom left vertex
-			tempVertex.Position = XMFLOAT3(tlx, 0, tlz + 1);
+			tempVertex.Position = XMFLOAT3(tlx, 0, tlz - 1);
 			_vertices.push_back(tempVertex);
 
 			//bottom right vertex
-			tempVertex.Position = XMFLOAT3(tlx + 1, 0, tlz + 1);
+			tempVertex.Position = XMFLOAT3(tlx + 1, 0, tlz - 1);
 			_vertices.push_back(tempVertex);
 
 			////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -67,12 +67,10 @@ bool TerrainNode::Initialise()
 	//4. Create the vertex and index buffers for the terrain polygons
 	this->BuildRendererStates();
 	
+	this->BuildGeometryBuffers();
 	this->BuildShaders();
 	this->BuildVertexLayout();
 	this->BuildConstantBuffer();
-	this->BuildGeometryBuffers();
-	
-	
 	
 
 	//5. Load the tile textures
@@ -87,13 +85,13 @@ void TerrainNode::Render()
 	XMFLOAT4X4 projectionTransformation = DXWindow::GetDXFramework()->GetProjectionTransformation();
 	XMFLOAT4X4 viewTransformation = DXWindow::GetDXFramework()->GetViewTransformation();
 
-	XMMATRIX completeTransformation = XMLoadFloat4x4(&_worldTransformation) * XMLoadFloat4x4(&viewTransformation) * XMLoadFloat4x4(&projectionTransformation);
+	XMMATRIX completeTransformation = XMLoadFloat4x4(&_localTransformation) * XMLoadFloat4x4(&viewTransformation) * XMLoadFloat4x4(&projectionTransformation);
 	
 	CBUFFER cBuffer;
 	cBuffer.completeTransformation = completeTransformation;
-	cBuffer.worldTransformation = XMLoadFloat4x4(&_localTransformation);
+	cBuffer.worldTransformation = XMLoadFloat4x4(&_worldTransformation);
 	cBuffer.cameraPosition = XMFLOAT4(0.0f, 50.0f, -500.0f, 0.0f);
-	cBuffer.lightVector = XMVector4Normalize(XMVectorSet(0.0f, 01.0f, 1.0f, 0.0f));
+	cBuffer.lightVector = XMVector4Normalize(XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f));
 	cBuffer.lightColor = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
 	cBuffer.ambientColor = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
 	cBuffer.diffuseColor = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
@@ -106,13 +104,15 @@ void TerrainNode::Render()
 
 	UINT stride = sizeof(VERTEX);
 	UINT offset = 0;
+	_dxframework->GetDeviceContext()->VSSetConstantBuffers(0, 1, _constantBuffer.GetAddressOf());
+	_dxframework->GetDeviceContext()->UpdateSubresource(_constantBuffer.Get(), 0, 0, &cBuffer, 0, 0);
+
 	_dxframework->GetDeviceContext()->IASetVertexBuffers(0, 1, _vertexBuffer.GetAddressOf(), &stride, &offset);
 	_dxframework->GetDeviceContext()->IASetIndexBuffer(_indexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
 	_dxframework->GetDeviceContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	_dxframework->GetDeviceContext()->VSSetConstantBuffers(0, 1, _constantBuffer.GetAddressOf());
 
 	_dxframework->GetDeviceContext()->RSSetState(_wireframeRasteriserState.Get());
-	_dxframework->GetDeviceContext()->DrawIndexed(static_cast<UINT>(_indices.size()), 0, 0);
+	_dxframework->GetDeviceContext()->DrawIndexed(_indices.size(), 0, 0);
 	_dxframework->GetDeviceContext()->RSSetState(_defaultRasteriserState.Get());
 
 }
@@ -158,6 +158,7 @@ void TerrainNode::BuildConstantBuffer()
 	bufferDesc.Usage = D3D11_USAGE_DEFAULT;
 	bufferDesc.ByteWidth = sizeof(CBUFFER);
 	bufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+
 	ThrowIfFailed(_dxframework->GetDevice()->CreateBuffer(&bufferDesc, NULL, _constantBuffer.GetAddressOf()));
 }
 
@@ -211,10 +212,10 @@ void TerrainNode::BuildVertexLayout()
 
 	D3D11_INPUT_ELEMENT_DESC vertexDesc[] =
 	{
-	{ "Position",  0, DXGI_FORMAT_R32G32B32_FLOAT, 0,							 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-	{ "Normal",    0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-	{ "TexCoord", 0,    DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-	{ "BlendMapTexCoord", 0,    DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 }
+		{ "Position",  0, DXGI_FORMAT_R32G32B32_FLOAT, 0,							 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "Normal",    0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "TexCoord", 0,    DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "BlendMapTexCoord", 0,    DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 }
 	};
 	ThrowIfFailed(_dxframework->GetDevice()->CreateInputLayout(vertexDesc, ARRAYSIZE(vertexDesc), _vertexShaderByteCode->GetBufferPointer(), _vertexShaderByteCode->GetBufferSize(), _layout.GetAddressOf()));
 }
@@ -233,8 +234,33 @@ void TerrainNode::BuildRendererStates()
 	rasteriserDesc.ScissorEnable = false;
 	rasteriserDesc.MultisampleEnable = false;
 	rasteriserDesc.AntialiasedLineEnable = false;
+	
 	ThrowIfFailed(_dxframework->GetDevice()->CreateRasterizerState(&rasteriserDesc, _defaultRasteriserState.GetAddressOf()));
-	rasteriserDesc.FillMode = D3D11_FILL_WIREFRAME;
+	rasteriserDesc.FillMode = D3D11_FILL_WIREFRAME;	
 	ThrowIfFailed(_dxframework->GetDevice()->CreateRasterizerState(&rasteriserDesc, _wireframeRasteriserState.GetAddressOf()));
+}
+
+bool TerrainNode::LoadHeightMap(wstring heightMapFilename)
+{
+	int fileSize = (NUMBER_OF_COLUMNS + 1) * (NUMBER_OF_ROWS + 1);
+	BYTE * rawFileValues = new BYTE[fileSize];
+
+	std::ifstream inputHeightMap;
+	inputHeightMap.open(heightMapFilename.c_str(), std::ios_base::binary);
+	if (!inputHeightMap)
+	{
+		return false;
+	}
+
+	inputHeightMap.read((char*)rawFileValues, fileSize);
+	inputHeightMap.close();
+
+	// Normalise BYTE values to the range 0.0f - 1.0f;
+	for (unsigned int i = 0; i < fileSize; i++)
+	{
+		_heightValues.push_back((float)rawFileValues[i] / 255);
+	}
+	delete[] rawFileValues;
+	return true;
 }
 

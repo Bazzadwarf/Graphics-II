@@ -3,6 +3,10 @@
 #include "DXWindow.h"
 #include "WICTextureLoader.h"
 #include <vector>
+#include <fstream>
+
+#define NUMBER_OF_ROWS			256
+#define NUMBER_OF_COLUMNS	    256
 
 class TerrainNode : public SceneNode
 {
@@ -43,6 +47,8 @@ public:
 
 	void BuildRendererStates();
 
+	bool LoadHeightMap(wstring heightMapFilename);
+
 private:	
 	DXWindow * _dxframework;
 	
@@ -50,6 +56,7 @@ private:
 
 	vector<VERTEX> _vertices;
 	vector<UINT> _indices;
+	vector<float> _heightValues;
 
 	int _gridSize = 256;
 
