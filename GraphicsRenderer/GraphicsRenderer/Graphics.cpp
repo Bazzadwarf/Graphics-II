@@ -10,7 +10,7 @@ void Graphics::CreateSceneGraph()
 	node->Update(XMMatrixTranslation(0, 0, -10.0f));
 	sceneGraph->Add(node);
 
-	shared_ptr<TerrainNode> terrain = make_shared<TerrainNode>(L"Terrain", L"Terrain.png");
+	shared_ptr<TerrainNode> terrain = make_shared<TerrainNode>(L"Terrain", L"rollinghills.raw");
 	sceneGraph->Add(terrain);
 
 	sceneGraph->Initialise();

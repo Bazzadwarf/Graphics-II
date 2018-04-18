@@ -40,6 +40,8 @@ public:
 	void Render();
 	void Shutdown();
 
+	void GenerateGrid();
+
 	void BuildGeometryBuffers();
 	void BuildConstantBuffer();
 	void BuildShaders();

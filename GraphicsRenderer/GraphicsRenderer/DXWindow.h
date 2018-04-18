@@ -35,6 +35,8 @@ public:
 	inline XMFLOAT4X4 GetProjectionTransformation() { return _projectionTransformation; }
 	inline shared_ptr<ResourceManager> GetResourceManager() { return _resourceManager; }
 
+	XMFLOAT4						_eyePosition;
+
 private:
 	double _timeSpan;
 
@@ -52,7 +54,6 @@ private:
 	// to be aligned on 16-byte boundaries and the compiler cannot
 	// guarantee this for class variables
 
-	XMFLOAT4						_eyePosition;
 	XMFLOAT4						_focalPointPosition;
 	XMFLOAT4						_upVector;
 

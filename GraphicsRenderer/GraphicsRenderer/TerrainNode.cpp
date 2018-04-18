@@ -5,73 +5,19 @@ bool TerrainNode::Initialise()
 	_dxframework = DXWindow::GetDXFramework();
 	
 	//1. Load the height map
-	LoadHeightMap(_file);
+	this->LoadHeightMap(_file);
+
 	//2. Generate the vertices and indices for the polygongs in the terrain grid
-	
-	VERTEX tempVertex;
-	tempVertex.Normal = XMFLOAT3(0, 0, 0);
-	tempVertex.TexCoord = XMFLOAT2(0, 0);
-	tempVertex.BlendMapTexCoord = XMFLOAT2(0, 0);
-
-	for (float z = 0; z < _gridSize; z++)
-	{
-		for (float x = 0; x < _gridSize; x++)
-		{
-			int square = x + (z * _gridSize);
-			float tlx = (square % _gridSize) - (_gridSize / 2);
-			float tlz = (floor(square / _gridSize) - (_gridSize / 2));
-
-			////////////////////////////////////////////////////////////////////////////////////////////////////
-
-			//top left vertex
-			tempVertex.Position = XMFLOAT3(tlx, 0, tlz);
-			_vertices.push_back(tempVertex);
-
-			//top right vertex
-			tempVertex.Position = XMFLOAT3(tlx + 1, 0, tlz);
-			_vertices.push_back(tempVertex);
-
-			//bottom left vertex
-			tempVertex.Position = XMFLOAT3(tlx, 0, tlz - 1);
-			_vertices.push_back(tempVertex);
-
-			//bottom right vertex
-			tempVertex.Position = XMFLOAT3(tlx + 1, 0, tlz - 1);
-			_vertices.push_back(tempVertex);
-
-			////////////////////////////////////////////////////////////////////////////////////////////////////
-
-			//Triangle 1 v1
-			_indices.push_back(square * 4);				//Get the 1st vertex in the square for the 1st triangle
-
-			//Triangle 1 v2
-			_indices.push_back((square * 4) + 1);		//Get the 2nd vertex in the square for the 1st triangle
-			
-			//Triangle 1 v3
-			_indices.push_back((square * 4) + 2);		//Get the 3rd vertex in the square for the 1st triangle
-														
-			//Triangle 2 v3
-			_indices.push_back((square * 4) + 2);		//Get the 3rd vertex in the square for the 2nd triangle
-
-			//Triangle 2 v2
-			_indices.push_back((square * 4) + 1);		//Get the 2nd vertex in the square for the 2nd triangle
-
-			//Triangle 2 v4
-			_indices.push_back((square * 4) + 3);		//Get the 4th vertex in the square for the 2nd triangle
-
-		}
-	}
+	this->GenerateGrid();
 
 	//3. Generate the normals for the polygons in the terrain grid
 
 	//4. Create the vertex and index buffers for the terrain polygons
 	this->BuildRendererStates();
-	
 	this->BuildGeometryBuffers();
 	this->BuildShaders();
 	this->BuildVertexLayout();
 	this->BuildConstantBuffer();
-	
 
 	//5. Load the tile textures
 
@@ -89,8 +35,8 @@ void TerrainNode::Render()
 	
 	CBUFFER cBuffer;
 	cBuffer.completeTransformation = completeTransformation;
-	cBuffer.worldTransformation = XMLoadFloat4x4(&_worldTransformation);
-	cBuffer.cameraPosition = XMFLOAT4(0.0f, 50.0f, -500.0f, 0.0f);
+	cBuffer.worldTransformation = XMLoadFloat4x4(&_localTransformation);
+	cBuffer.cameraPosition = _dxframework->_eyePosition;
 	cBuffer.lightVector = XMVector4Normalize(XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f));
 	cBuffer.lightColor = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
 	cBuffer.ambientColor = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
@@ -119,6 +65,59 @@ void TerrainNode::Render()
 
 void TerrainNode::Shutdown()
 {
+}
+
+void TerrainNode::GenerateGrid()
+{
+	VERTEX tempVertex;
+	tempVertex.Normal = XMFLOAT3(0, 0, 0);
+	tempVertex.TexCoord = XMFLOAT2(0, 0);
+	tempVertex.BlendMapTexCoord = XMFLOAT2(0, 0);
+
+	for (float z = 0; z < _gridSize; z++)
+	{
+		for (float x = 0; x < _gridSize; x++)
+		{
+			int square = x + (z * _gridSize);
+			float tlx = (square % _gridSize) - (_gridSize / 2);
+			float tlz = (floor(square / (-_gridSize)) + (_gridSize / 2));
+
+			//top left vertex
+			tempVertex.Position = XMFLOAT3(tlx, _heightValues.at(square) * 100, tlz);
+			_vertices.push_back(tempVertex);
+
+			//top right vertex
+			tempVertex.Position = XMFLOAT3(tlx + 1, _heightValues.at(square + 1) * 100, tlz);
+			_vertices.push_back(tempVertex);
+
+			//bottom left vertex
+			tempVertex.Position = XMFLOAT3(tlx, _heightValues.at(square + 256) * 100, tlz - 1);
+			_vertices.push_back(tempVertex);
+
+			//bottom right vertex
+			tempVertex.Position = XMFLOAT3(tlx + 1, _heightValues.at(square + 256) * 100, tlz - 1);
+			_vertices.push_back(tempVertex);
+
+			//Triangle 1 v1
+			_indices.push_back(square * 4);				//Get the 1st vertex in the square for the 1st triangle
+
+														//Triangle 1 v2
+			_indices.push_back((square * 4) + 1);		//Get the 2nd vertex in the square for the 1st triangle
+
+														//Triangle 1 v3
+			_indices.push_back((square * 4) + 2);		//Get the 3rd vertex in the square for the 1st triangle
+
+														//Triangle 2 v3
+			_indices.push_back((square * 4) + 2);		//Get the 3rd vertex in the square for the 2nd triangle
+
+														//Triangle 2 v2
+			_indices.push_back((square * 4) + 1);		//Get the 2nd vertex in the square for the 2nd triangle
+
+														//Triangle 2 v4
+			_indices.push_back((square * 4) + 3);		//Get the 4th vertex in the square for the 2nd triangle
+
+		}
+	}
 }
 
 void TerrainNode::BuildGeometryBuffers()
