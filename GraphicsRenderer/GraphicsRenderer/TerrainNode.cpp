@@ -11,6 +11,7 @@ bool TerrainNode::Initialise()
 	this->GenerateGrid();
 
 	//3. Generate the normals for the polygons in the terrain grid
+	this->GenerateNormals();
 
 	//4. Create the vertex and index buffers for the terrain polygons
 	this->BuildRendererStates();
@@ -39,10 +40,10 @@ void TerrainNode::Render()
 	cBuffer.cameraPosition = _dxframework->_eyePosition;
 	cBuffer.lightVector = XMVector4Normalize(XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f));
 	cBuffer.lightColor = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
-	cBuffer.ambientColor = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
-	cBuffer.diffuseColor = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
-	cBuffer.specularColor = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
-	cBuffer.shininess = 1;
+	cBuffer.ambientColor = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
+	cBuffer.diffuseColor = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
+	cBuffer.specularColor = XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f);
+	cBuffer.shininess = 0;
 
 	_dxframework->GetDeviceContext()->VSSetShader(_vertexShader.Get(), 0, 0);
 	_dxframework->GetDeviceContext()->PSSetShader(_pixelShader.Get(), 0, 0);
@@ -57,10 +58,9 @@ void TerrainNode::Render()
 	_dxframework->GetDeviceContext()->IASetIndexBuffer(_indexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
 	_dxframework->GetDeviceContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-	_dxframework->GetDeviceContext()->RSSetState(_wireframeRasteriserState.Get());
+	//_dxframework->GetDeviceContext()->RSSetState(_wireframeRasteriserState.Get());
+	//_dxframework->GetDeviceContext()->RSSetState(_defaultRasteriserState.Get());
 	_dxframework->GetDeviceContext()->DrawIndexed(_indices.size(), 0, 0);
-	_dxframework->GetDeviceContext()->RSSetState(_defaultRasteriserState.Get());
-
 }
 
 void TerrainNode::Shutdown()
@@ -98,7 +98,7 @@ void TerrainNode::GenerateGrid()
 			tempVertex.Position = XMFLOAT3(tlx + 1, _heightValues.at(square + 257) * 100, tlz - 1);
 			_vertices.push_back(tempVertex);
 
-			//Triangle 1 v1
+														//Triangle 1 v1
 			_indices.push_back(square * 4);				//Get the 1st vertex in the square for the 1st triangle
 
 														//Triangle 1 v2
@@ -117,6 +117,61 @@ void TerrainNode::GenerateGrid()
 			_indices.push_back((square * 4) + 3);		//Get the 4th vertex in the square for the 2nd triangle
 
 		}
+	}
+}
+
+void TerrainNode::GenerateNormals()
+{
+	int squareCount = _gridSize * _gridSize;
+	
+	//for each square in the grid
+	for (int i = 0; i < squareCount; i++)
+	{
+		
+		//Calculate Normal for polygon 1
+		XMVECTOR p1a = XMVectorSet(_vertices[(i * 4)].Position.x - _vertices[(i * 4) + 1].Position.x,
+								   _vertices[(i * 4)].Position.y - _vertices[(i * 4) + 1].Position.y,
+								   _vertices[(i * 4)].Position.z - _vertices[(i * 4) + 1].Position.z,
+								   0);
+
+		XMVECTOR p1b = XMVectorSet(_vertices[(i * 4)].Position.x - _vertices[(i * 4) + 2].Position.x,
+								   _vertices[(i * 4)].Position.y - _vertices[(i * 4) + 2].Position.y,
+								   _vertices[(i * 4)].Position.z - _vertices[(i * 4) + 2].Position.z,
+								   0);
+
+		XMVECTOR p1normal = XMVector3Cross(p1b, p1a);
+
+		//Calculate Normal for polygon 2
+		XMVECTOR p2a = XMVectorSet(_vertices[(i * 4) + 2].Position.x - _vertices[(i * 4) + 1].Position.x,
+								   _vertices[(i * 4) + 2].Position.y - _vertices[(i * 4) + 1].Position.y,
+								   _vertices[(i * 4) + 2].Position.z - _vertices[(i * 4) + 1].Position.z,
+								   0);
+
+		XMVECTOR p2b = XMVectorSet(_vertices[(i * 4) + 2].Position.x - _vertices[(i * 4) + 3].Position.x,
+								   _vertices[(i * 4) + 2].Position.y - _vertices[(i * 4) + 3].Position.y,
+								   _vertices[(i * 4) + 2].Position.z - _vertices[(i * 4) + 3].Position.z,
+								   0);
+
+		XMVECTOR p2normal = XMVector3Cross(p2b, p2a);
+
+		//Set normal for the first vertex from polygon 1
+		XMVECTOR tempVert = p1normal;
+		tempVert = XMVector3Normalize(tempVert);
+		XMStoreFloat3(&_vertices[(i * 4)].Normal, tempVert);
+
+		//Set normal for the last vertex from polygon 2
+		tempVert = p2normal;
+		tempVert = XMVector3Normalize(tempVert);
+		XMStoreFloat3(&_vertices[(i * 4) + 3].Normal, tempVert);
+
+		//Set normal for the second vertex from the average of polygon 1 & 2
+		tempVert = (p1normal + p2normal) / 2;
+		tempVert = XMVector3Normalize(tempVert);
+		XMStoreFloat3(&_vertices[(i * 4) + 1].Normal, tempVert);
+
+		//Set normal for the third vertex from the average of polygon 1 & 2
+		XMStoreFloat3(&_vertices[(i * 4) + 2].Normal, tempVert);
+
 	}
 }
 
@@ -233,8 +288,8 @@ void TerrainNode::BuildRendererStates()
 	rasteriserDesc.ScissorEnable = false;
 	rasteriserDesc.MultisampleEnable = false;
 	rasteriserDesc.AntialiasedLineEnable = false;
-	
 	ThrowIfFailed(_dxframework->GetDevice()->CreateRasterizerState(&rasteriserDesc, _defaultRasteriserState.GetAddressOf()));
+
 	rasteriserDesc.FillMode = D3D11_FILL_WIREFRAME;	
 	ThrowIfFailed(_dxframework->GetDevice()->CreateRasterizerState(&rasteriserDesc, _wireframeRasteriserState.GetAddressOf()));
 }

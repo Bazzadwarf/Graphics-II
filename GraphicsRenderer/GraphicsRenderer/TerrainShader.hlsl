@@ -94,5 +94,5 @@ float4 PShader(PixelShaderInput input) : SV_TARGET
 
 	color = input.Color * color;
 	color = saturate(color + specular);
-	return float4(1.0f, 1.0f, 1.0f, 1.0f);
+	return color;
 }

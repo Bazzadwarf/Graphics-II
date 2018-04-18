@@ -42,6 +42,8 @@ public:
 
 	void GenerateGrid();
 
+	void GenerateNormals();
+
 	void BuildGeometryBuffers();
 	void BuildConstantBuffer();
 	void BuildShaders();
