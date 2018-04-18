@@ -26,7 +26,7 @@ void DXWindow::InitialiseDirectX()
 	_dxWindow = this;
 
 	//Set the position of the camera
-	_eyePosition = XMFLOAT4(0.0f, 200.0f, -300.0f, 0.0f);
+	_eyePosition = XMFLOAT4(0.0f, 100.0f, -250.0f, 0.0f);
 	_focalPointPosition = XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f);
 	_upVector = XMFLOAT4(0.0f, 1.0f, 0.0f, 0.0f);
 

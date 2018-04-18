@@ -31,11 +31,11 @@ void TerrainNode::Render()
 	XMFLOAT4X4 projectionTransformation = DXWindow::GetDXFramework()->GetProjectionTransformation();
 	XMFLOAT4X4 viewTransformation = DXWindow::GetDXFramework()->GetViewTransformation();
 
-	XMMATRIX completeTransformation = XMLoadFloat4x4(&_localTransformation) * XMLoadFloat4x4(&viewTransformation) * XMLoadFloat4x4(&projectionTransformation);
+	XMMATRIX completeTransformation = XMLoadFloat4x4(&_worldTransformation) * XMLoadFloat4x4(&viewTransformation) * XMLoadFloat4x4(&projectionTransformation);
 	
 	CBUFFER cBuffer;
 	cBuffer.completeTransformation = completeTransformation;
-	cBuffer.worldTransformation = XMLoadFloat4x4(&_localTransformation);
+	cBuffer.worldTransformation = XMLoadFloat4x4(&_worldTransformation);
 	cBuffer.cameraPosition = _dxframework->_eyePosition;
 	cBuffer.lightVector = XMVector4Normalize(XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f));
 	cBuffer.lightColor = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
@@ -95,7 +95,7 @@ void TerrainNode::GenerateGrid()
 			_vertices.push_back(tempVertex);
 
 			//bottom right vertex
-			tempVertex.Position = XMFLOAT3(tlx + 1, _heightValues.at(square + 256) * 100, tlz - 1);
+			tempVertex.Position = XMFLOAT3(tlx + 1, _heightValues.at(square + 257) * 100, tlz - 1);
 			_vertices.push_back(tempVertex);
 
 			//Triangle 1 v1
