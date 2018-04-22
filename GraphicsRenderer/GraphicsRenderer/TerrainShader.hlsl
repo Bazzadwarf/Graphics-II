@@ -87,7 +87,7 @@ float4 PShader(PixelShaderInput input) : SV_TARGET
 	float4 c1 = float4(1, 1, 1, 1);
 	float4 c2 = float4(1, 1, 1, 1);
 	float4 c3 = float4(1, 1, 1, 1);
-	float4 c4 = float4(1, 0, 0, 1);
+	float4 c4 = float4(1, 1, 1, 1);
 
 	// Sample the blend map.
 	float4 t = BlendMap.Sample(ss, input.BlendMapTexCoord);
