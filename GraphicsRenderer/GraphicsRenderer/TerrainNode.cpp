@@ -38,9 +38,9 @@ void TerrainNode::Render()
 	cBuffer.completeTransformation = completeTransformation;
 	cBuffer.worldTransformation = XMLoadFloat4x4(&_worldTransformation);
 	cBuffer.cameraPosition = _dxframework->_eyePosition;
-	cBuffer.lightVector = XMVector4Normalize(XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f));
+	cBuffer.lightVector = XMVector4Normalize(XMVectorSet(0.0f, 1.0f, 1.0f, 0.0f));
 	cBuffer.lightColor = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
-	cBuffer.ambientColor = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
+	cBuffer.ambientColor = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
 	cBuffer.diffuseColor = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
 	cBuffer.specularColor = XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f);
 	cBuffer.shininess = 0;
