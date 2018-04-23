@@ -42,9 +42,9 @@ void TerrainNode::Render()
 	cBuffer.cameraPosition = _dxframework->_eyePosition;
 	cBuffer.lightVector = XMVector4Normalize(XMVectorSet(0.0f, 1.0f, 1.0f, 0.0f));
 	cBuffer.lightColor = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
-	cBuffer.ambientColor = XMFLOAT4(1.0f, 1.0f, 1.0f, 0.5f);
+	cBuffer.ambientColor = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
 	cBuffer.diffuseColor = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
-	cBuffer.specularColor = XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f);
+	cBuffer.specularColor = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
 	cBuffer.shininess = 0;
 
 	_dxframework->GetDeviceContext()->VSSetShader(_vertexShader.Get(), 0, 0);
@@ -63,9 +63,10 @@ void TerrainNode::Render()
 	_dxframework->GetDeviceContext()->PSSetShaderResources(0, 1, _blendMapResourceView.GetAddressOf());
 	_dxframework->GetDeviceContext()->PSSetShaderResources(1, 1, _texturesResourceView.GetAddressOf());
 
-	//_dxframework->GetDeviceContext()->RSSetState(_wireframeRasteriserState.Get());
-	//_dxframework->GetDeviceContext()->RSSetState(_defaultRasteriserState.Get());
+	/*_dxframework->GetDeviceContext()->RSSetState(_wireframeRasteriserState.Get());*/
 	_dxframework->GetDeviceContext()->DrawIndexed(_indices.size(), 0, 0);
+	/*_dxframework->GetDeviceContext()->RSSetState(_defaultRasteriserState.Get());*/
+	
 }
 
 void TerrainNode::Shutdown()
@@ -88,25 +89,25 @@ void TerrainNode::GenerateGrid()
 			float tlz = (floor(square / (-_gridSize)) + (_gridSize / 2));
 
 			//top left vertex
-			tempVertex.Position = XMFLOAT3(tlx, _heightValues.at(square) * 50, tlz);
+			tempVertex.Position = XMFLOAT3(tlx, _heightValues[((z * 257) + x)] * MAGNITUDE, tlz);
 			tempVertex.TexCoord = XMFLOAT2(0, 0);
 			tempVertex.BlendMapTexCoord = XMFLOAT2(x / 256, z / 256);
 			_vertices.push_back(tempVertex);
 
 			//top right vertex
-			tempVertex.Position = XMFLOAT3(tlx + 1, _heightValues.at(square + 1) * 50, tlz);
+			tempVertex.Position = XMFLOAT3(tlx + 1, _heightValues[((z * 257) + x) + 1] * MAGNITUDE, tlz);
 			tempVertex.TexCoord = XMFLOAT2(1, 0);
 			tempVertex.BlendMapTexCoord = XMFLOAT2((x + 1) / 256, z / 256);
 			_vertices.push_back(tempVertex);
 
 			//bottom left vertex
-			tempVertex.Position = XMFLOAT3(tlx, _heightValues.at(square + 256) * 50, tlz - 1);
+			tempVertex.Position = XMFLOAT3(tlx, _heightValues[((z * 257) + x) + 257] * MAGNITUDE, tlz - 1);
 			tempVertex.TexCoord = XMFLOAT2(0, 1);
 			tempVertex.BlendMapTexCoord = XMFLOAT2(x / 256, (z + 1) / 256);
 			_vertices.push_back(tempVertex);
 
 			//bottom right vertex
-			tempVertex.Position = XMFLOAT3(tlx + 1, _heightValues.at(square + 257) * 50, tlz - 1);
+			tempVertex.Position = XMFLOAT3(tlx + 1, _heightValues[((z * 257) + x) + 258] * MAGNITUDE, tlz - 1);
 			tempVertex.TexCoord = XMFLOAT2(1, 1);
 			tempVertex.BlendMapTexCoord = XMFLOAT2((x + 1) / 256, (z + 1) / 256);
 			_vertices.push_back(tempVertex);
@@ -423,12 +424,41 @@ void TerrainNode::GenerateBlendMap()
 			// between 0 and 255) and then combine then into a DWORD
 			// (32-bit value) to store in the blend map.
 
+			// The values of (0, 0, 0, 0) will only show the grass texture.
+
+			// The R value determins how much dirt will be blended in.
+			byte r = 0;
+			if (_heightValues[(i * NUMBER_OF_COLUMNS) + j] > 0.1f)
+			{
+				r = 64;
+			}
+
+			// The G value determins how much stone will be blended in.
+			byte g = 0;
+			if (_heightValues[(i * NUMBER_OF_COLUMNS) + j] > 0.4f && _heightValues[(i * NUMBER_OF_COLUMNS) + j] < 0.6f)
+			{
+				g = 64;
+			}
+			else if (_heightValues[(i * NUMBER_OF_COLUMNS) + j] > 0.6f && _heightValues[(i * NUMBER_OF_COLUMNS) + j] < 0.8f)
+			{
+				g = 200;
+			}
 			
-			/*uint8_t r = 0;
-			uint8_t g = 0;
-			uint8_t b = 0;
-			uint8_t a = 0;*/
-			blendMap[j + (i * NUMBER_OF_COLUMNS)] = unsigned long((i * NUMBER_OF_COLUMNS) + j);
+			// The B value determins how much light dirt will be blended in.
+			byte b = 0;
+			if (_heightValues[(i * NUMBER_OF_COLUMNS) + j] > 0.2f && _heightValues[(i * NUMBER_OF_COLUMNS) + j] < 0.6f)
+			{
+				b = 64;
+			}
+			
+			// The A value determins how much snow will be blended in.
+			byte a = 0;
+			if (_heightValues[(i * NUMBER_OF_COLUMNS) + j] > 0.6f)
+			{
+				g = 255;
+			}
+			
+			blendMap[j + (i * NUMBER_OF_COLUMNS)] = (r | (g << 8) | (b << 16) | (a << 24));
 		}
 	}
 	// Now create the texture from the raw blend map data

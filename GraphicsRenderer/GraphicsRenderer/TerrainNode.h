@@ -6,8 +6,9 @@
 #include <vector>
 #include <fstream>
 
-#define NUMBER_OF_ROWS			256
-#define NUMBER_OF_COLUMNS	    256
+#define NUMBER_OF_ROWS			257
+#define NUMBER_OF_COLUMNS	    257
+#define MAGNITUDE				100
 
 class TerrainNode : public SceneNode
 {
