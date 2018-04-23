@@ -22,7 +22,7 @@ void CubeNode::Update(FXMMATRIX & currentWorldTransformation)
 
 void CubeNode::Render()
 {
-	XMMATRIX combinedTransformation = XMLoadFloat4x4(&_localTransformation) * XMLoadFloat4x4(&_dxframework->GetViewTransformation()) * XMLoadFloat4x4(&_dxframework->GetProjectionTransformation());
+	XMMATRIX combinedTransformation = XMLoadFloat4x4(&_localTransformation) * _dxframework->GetCamera()->GetViewMatrix() * XMLoadFloat4x4(&_dxframework->GetProjectionTransformation());
 
 	CBUFFER cBuffer;
 	cBuffer.CompleteTransformation = combinedTransformation;

@@ -54,9 +54,9 @@ bool MeshRenderer::Initialise()
 void MeshRenderer::Render()
 {
 	XMFLOAT4X4 projectionTransformation = DXWindow::GetDXFramework()->GetProjectionTransformation();
-	XMFLOAT4X4 viewTransformation = DXWindow::GetDXFramework()->GetViewTransformation();
+	XMMATRIX viewTransformation = DXWindow::GetDXFramework()->GetCamera()->GetViewMatrix();
 
-	XMMATRIX completeTransformation = XMLoadFloat4x4(&_worldTransformation) * XMLoadFloat4x4(&viewTransformation) * XMLoadFloat4x4(&projectionTransformation);
+	XMMATRIX completeTransformation = XMLoadFloat4x4(&_worldTransformation) * viewTransformation * XMLoadFloat4x4(&projectionTransformation);
 
 	// Draw the first cube
 	CBUFFER cBuffer;

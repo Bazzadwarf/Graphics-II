@@ -32,14 +32,14 @@ bool TerrainNode::Initialise()
 void TerrainNode::Render()
 {
 	XMFLOAT4X4 projectionTransformation = DXWindow::GetDXFramework()->GetProjectionTransformation();
-	XMFLOAT4X4 viewTransformation = DXWindow::GetDXFramework()->GetViewTransformation();
+	XMMATRIX viewTransformation = _dxframework->GetCamera()->GetViewMatrix();
 
-	XMMATRIX completeTransformation = XMLoadFloat4x4(&_worldTransformation) * XMLoadFloat4x4(&viewTransformation) * XMLoadFloat4x4(&projectionTransformation);
+	XMMATRIX completeTransformation = XMLoadFloat4x4(&_worldTransformation) * viewTransformation * XMLoadFloat4x4(&projectionTransformation);
 	
 	CBUFFER cBuffer;
 	cBuffer.completeTransformation = completeTransformation;
 	cBuffer.worldTransformation = XMLoadFloat4x4(&_worldTransformation);
-	cBuffer.cameraPosition = _dxframework->_eyePosition;
+	XMStoreFloat4(&cBuffer.cameraPosition , _dxframework->GetCamera()->GetCameraPosition());
 	cBuffer.lightVector = XMVector4Normalize(XMVectorSet(0.0f, 1.0f, 1.0f, 0.0f));
 	cBuffer.lightColor = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
 	cBuffer.ambientColor = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
