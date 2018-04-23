@@ -1,0 +1,13 @@
+﻿  TerrainNode.cpp
+c:\users\100417638\desktop\graphics-ii-master\graphicsrenderer\graphicsrenderer\terrainnode.cpp(67): warning C4267: 'argument': conversion from 'size_t' to 'UINT', possible loss of data
+c:\users\100417638\desktop\graphics-ii-master\graphicsrenderer\graphicsrenderer\terrainnode.cpp(87): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+c:\users\100417638\desktop\graphics-ii-master\graphicsrenderer\graphicsrenderer\terrainnode.cpp(88): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+c:\users\100417638\desktop\graphics-ii-master\graphicsrenderer\graphicsrenderer\terrainnode.cpp(89): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+c:\users\100417638\desktop\graphics-ii-master\graphicsrenderer\graphicsrenderer\terrainnode.cpp(196): warning C4267: '=': conversion from 'size_t' to 'UINT', possible loss of data
+c:\users\100417638\desktop\graphics-ii-master\graphicsrenderer\graphicsrenderer\terrainnode.cpp(209): warning C4267: '=': conversion from 'size_t' to 'UINT', possible loss of data
+c:\users\100417638\desktop\graphics-ii-master\graphicsrenderer\graphicsrenderer\terrainnode.cpp(327): warning C4018: '<': signed/unsigned mismatch
+  GraphicsRenderer.vcxproj -> C:\Users\100417638\Desktop\Graphics-II-master\GraphicsRenderer\x64\Debug\GraphicsRenderer.exe
+  C:\Users\100417638\Desktop\Graphics-II-master\GraphicsRenderer\GraphicsRenderer\assimp-vc140-mt.dll
+  C:\Users\100417638\Desktop\Graphics-II-master\GraphicsRenderer\GraphicsRenderer\zlib.dll
+          2 file(s) copied.
+          1 file(s) copied.
