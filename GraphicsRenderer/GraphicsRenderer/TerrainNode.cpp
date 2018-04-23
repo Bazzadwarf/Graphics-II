@@ -21,8 +21,10 @@ bool TerrainNode::Initialise()
 	this->BuildConstantBuffer();
 
 	//5. Load the tile textures
+	this->LoadTerrainTextures();
 
 	//6. Generate a blend map for the terrain
+	this->GenerateBlendMap();
 
 	return true;
 }
@@ -40,7 +42,7 @@ void TerrainNode::Render()
 	cBuffer.cameraPosition = _dxframework->_eyePosition;
 	cBuffer.lightVector = XMVector4Normalize(XMVectorSet(0.0f, 1.0f, 1.0f, 0.0f));
 	cBuffer.lightColor = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
-	cBuffer.ambientColor = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+	cBuffer.ambientColor = XMFLOAT4(1.0f, 1.0f, 1.0f, 0.5f);
 	cBuffer.diffuseColor = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
 	cBuffer.specularColor = XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f);
 	cBuffer.shininess = 0;
@@ -57,6 +59,9 @@ void TerrainNode::Render()
 	_dxframework->GetDeviceContext()->IASetVertexBuffers(0, 1, _vertexBuffer.GetAddressOf(), &stride, &offset);
 	_dxframework->GetDeviceContext()->IASetIndexBuffer(_indexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
 	_dxframework->GetDeviceContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+	_dxframework->GetDeviceContext()->PSSetShaderResources(0, 1, _blendMapResourceView.GetAddressOf());
+	_dxframework->GetDeviceContext()->PSSetShaderResources(1, 1, _texturesResourceView.GetAddressOf());
 
 	//_dxframework->GetDeviceContext()->RSSetState(_wireframeRasteriserState.Get());
 	//_dxframework->GetDeviceContext()->RSSetState(_defaultRasteriserState.Get());
@@ -79,23 +84,31 @@ void TerrainNode::GenerateGrid()
 		for (float x = 0; x < _gridSize; x++)
 		{
 			int square = x + (z * _gridSize);
-			float tlx = (square % _gridSize) - (_gridSize / 2);
+			float tlx = ((square % _gridSize) - (_gridSize / 2));
 			float tlz = (floor(square / (-_gridSize)) + (_gridSize / 2));
 
 			//top left vertex
-			tempVertex.Position = XMFLOAT3(tlx, _heightValues.at(square) * 100, tlz);
+			tempVertex.Position = XMFLOAT3(tlx, _heightValues.at(square) * 50, tlz);
+			tempVertex.TexCoord = XMFLOAT2(0, 0);
+			tempVertex.BlendMapTexCoord = XMFLOAT2(x / 256, z / 256);
 			_vertices.push_back(tempVertex);
 
 			//top right vertex
-			tempVertex.Position = XMFLOAT3(tlx + 1, _heightValues.at(square + 1) * 100, tlz);
+			tempVertex.Position = XMFLOAT3(tlx + 1, _heightValues.at(square + 1) * 50, tlz);
+			tempVertex.TexCoord = XMFLOAT2(1, 0);
+			tempVertex.BlendMapTexCoord = XMFLOAT2((x + 1) / 256, z / 256);
 			_vertices.push_back(tempVertex);
 
 			//bottom left vertex
-			tempVertex.Position = XMFLOAT3(tlx, _heightValues.at(square + 256) * 100, tlz - 1);
+			tempVertex.Position = XMFLOAT3(tlx, _heightValues.at(square + 256) * 50, tlz - 1);
+			tempVertex.TexCoord = XMFLOAT2(0, 1);
+			tempVertex.BlendMapTexCoord = XMFLOAT2(x / 256, (z + 1) / 256);
 			_vertices.push_back(tempVertex);
 
 			//bottom right vertex
-			tempVertex.Position = XMFLOAT3(tlx + 1, _heightValues.at(square + 257) * 100, tlz - 1);
+			tempVertex.Position = XMFLOAT3(tlx + 1, _heightValues.at(square + 257) * 50, tlz - 1);
+			tempVertex.TexCoord = XMFLOAT2(1, 1);
+			tempVertex.BlendMapTexCoord = XMFLOAT2((x + 1) / 256, (z + 1) / 256);
 			_vertices.push_back(tempVertex);
 
 														//Triangle 1 v1
@@ -316,5 +329,136 @@ bool TerrainNode::LoadHeightMap(wstring heightMapFilename)
 	}
 	delete[] rawFileValues;
 	return true;
+}
+
+void TerrainNode::LoadTerrainTextures()
+{
+	// Change the paths below as appropriate for your use
+	wstring terrainTextureNames[5] = { L"grass.dds", L"darkdirt.dds", L"stone.dds", L"lightdirt.dds", L"snow.dds" };
+
+	// Load the textures from the files
+	ComPtr<ID3D11Resource> terrainTextures[5];
+	for (int i = 0; i < 5; i++)
+	{
+		ThrowIfFailed(CreateDDSTextureFromFileEx(_dxframework->GetDevice().Get(),
+			_dxframework->GetDeviceContext().Get(),
+			terrainTextureNames[i].c_str(),
+			0,
+			D3D11_USAGE_IMMUTABLE,
+			D3D11_BIND_SHADER_RESOURCE,
+			0,
+			0,
+			false,
+			terrainTextures[i].GetAddressOf(),
+			nullptr
+		));
+	}
+	// Now create the Texture2D arrary.  We assume all textures in the
+	// array have the same format and dimensions
+
+	D3D11_TEXTURE2D_DESC textureDescription;
+	ComPtr<ID3D11Texture2D> textureInterface;
+	terrainTextures[0].As<ID3D11Texture2D>(&textureInterface);
+	textureInterface->GetDesc(&textureDescription);
+
+	D3D11_TEXTURE2D_DESC textureArrayDescription;
+	textureArrayDescription.Width = textureDescription.Width;
+	textureArrayDescription.Height = textureDescription.Height;
+	textureArrayDescription.MipLevels = textureDescription.MipLevels;
+	textureArrayDescription.ArraySize = 5;
+	textureArrayDescription.Format = textureDescription.Format;
+	textureArrayDescription.SampleDesc.Count = 1;
+	textureArrayDescription.SampleDesc.Quality = 0;
+	textureArrayDescription.Usage = D3D11_USAGE_DEFAULT;
+	textureArrayDescription.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+	textureArrayDescription.CPUAccessFlags = 0;
+	textureArrayDescription.MiscFlags = 0;
+
+	ComPtr<ID3D11Texture2D> textureArray = 0;
+	ThrowIfFailed(_dxframework->GetDevice()->CreateTexture2D(&textureArrayDescription, 0, textureArray.GetAddressOf()));
+
+	// Copy individual texture elements into texture array.
+
+	for (UINT i = 0; i < 5; i++)
+	{
+		// For each mipmap level...
+		for (UINT mipLevel = 0; mipLevel < textureDescription.MipLevels; mipLevel++)
+		{
+			_dxframework->GetDeviceContext()->CopySubresourceRegion(textureArray.Get(),
+				D3D11CalcSubresource(mipLevel, i, textureDescription.MipLevels),
+				NULL,
+				NULL,
+				NULL,
+				terrainTextures[i].Get(),
+				mipLevel,
+				nullptr
+			);
+		}
+	}
+
+	// Create a resource view to the texture array.
+	D3D11_SHADER_RESOURCE_VIEW_DESC viewDescription;
+	viewDescription.Format = textureArrayDescription.Format;
+	viewDescription.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2DARRAY;
+	viewDescription.Texture2DArray.MostDetailedMip = 0;
+	viewDescription.Texture2DArray.MipLevels = textureArrayDescription.MipLevels;
+	viewDescription.Texture2DArray.FirstArraySlice = 0;
+	viewDescription.Texture2DArray.ArraySize = 5;
+
+	ThrowIfFailed(_dxframework->GetDevice()->CreateShaderResourceView(textureArray.Get(), &viewDescription, _texturesResourceView.GetAddressOf()));
+}
+
+void TerrainNode::GenerateBlendMap()
+{
+	DWORD blendMap[NUMBER_OF_ROWS * NUMBER_OF_COLUMNS];
+
+	for (DWORD i = 0; i < NUMBER_OF_COLUMNS; i++)
+	{
+		for (DWORD j = 0; j < NUMBER_OF_ROWS; j++)
+		{
+			// Calculate the appropriate blend colour for the 
+			// current location in the blend map.  This has been
+			// left as an exercise for you.  You need to calculate
+			// appropriate values for the r, g, b and a values (each
+			// between 0 and 255) and then combine then into a DWORD
+			// (32-bit value) to store in the blend map.
+
+			
+			/*uint8_t r = 0;
+			uint8_t g = 0;
+			uint8_t b = 0;
+			uint8_t a = 0;*/
+			blendMap[j + (i * NUMBER_OF_COLUMNS)] = unsigned long((i * NUMBER_OF_COLUMNS) + j);
+		}
+	}
+	// Now create the texture from the raw blend map data
+	D3D11_TEXTURE2D_DESC blendMapDescription;
+	blendMapDescription.Width = NUMBER_OF_ROWS;
+	blendMapDescription.Height = NUMBER_OF_COLUMNS;
+	blendMapDescription.MipLevels = 1;
+	blendMapDescription.ArraySize = 1;
+	blendMapDescription.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	blendMapDescription.SampleDesc.Count = 1;
+	blendMapDescription.SampleDesc.Quality = 0;
+	blendMapDescription.Usage = D3D11_USAGE_DEFAULT;
+	blendMapDescription.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+	blendMapDescription.CPUAccessFlags = 0;
+	blendMapDescription.MiscFlags = 0;
+
+	D3D11_SUBRESOURCE_DATA blendMapInitialisationData;
+	blendMapInitialisationData.pSysMem = &blendMap;
+	blendMapInitialisationData.SysMemPitch = 4 * NUMBER_OF_ROWS;
+
+	ComPtr<ID3D11Texture2D> blendMapTexture;
+	ThrowIfFailed(_dxframework->GetDevice()->CreateTexture2D(&blendMapDescription, &blendMapInitialisationData, blendMapTexture.GetAddressOf()));
+
+	// Create a resource view for the blend map.
+	D3D11_SHADER_RESOURCE_VIEW_DESC viewDescription;
+	viewDescription.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	viewDescription.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+	viewDescription.Texture2D.MostDetailedMip = 0;
+	viewDescription.Texture2D.MipLevels = 1;
+
+	ThrowIfFailed(_dxframework->GetDevice()->CreateShaderResourceView(blendMapTexture.Get(), &viewDescription, _blendMapResourceView.GetAddressOf()));
 }
 

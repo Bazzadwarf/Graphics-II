@@ -76,18 +76,18 @@ float4 PShader(PixelShaderInput input) : SV_TARGET
 		specular = specularColor * pow(saturate(dot(reflection, input.ViewDirection)), shininess);
 	}
 	// Sample layers in texture array.
-	/*float4 c0 = texturesarray.sample(ss, float3(input.texcoord, 0.0f));
-	float4 c1 = texturesarray.sample(ss, float3(input.texcoord, 1.0f));
-	float4 c2 = texturesarray.sample(ss, float3(input.texcoord, 2.0f));
-	float4 c3 = texturesarray.sample(ss, float3(input.texcoord, 3.0f));
-	float4 c4 = texturesarray.sample(ss, float3(input.texcoord, 4.0f));*/
+	float4 c0 = TexturesArray.Sample(ss, float3(input.TexCoord, 0.0f));
+	float4 c1 = TexturesArray.Sample(ss, float3(input.TexCoord, 1.0f));
+	float4 c2 = TexturesArray.Sample(ss, float3(input.TexCoord, 2.0f));
+	float4 c3 = TexturesArray.Sample(ss, float3(input.TexCoord, 3.0f));
+	float4 c4 = TexturesArray.Sample(ss, float3(input.TexCoord, 4.0f));
 
 	// Sample layers in texture array.
-	float4 c0 = float4(1, 1, 1, 1);
-	float4 c1 = float4(1, 1, 1, 1);
-	float4 c2 = float4(1, 1, 1, 1);
-	float4 c3 = float4(1, 1, 1, 1);
-	float4 c4 = float4(1, 1, 1, 1);
+	//float4 c0 = float4(1, 1, 1, 1);
+	//float4 c1 = float4(1, 1, 1, 1);
+	//float4 c2 = float4(1, 1, 1, 1);
+	//float4 c3 = float4(1, 1, 1, 1);
+	//float4 c4 = float4(1, 1, 1, 1);
 
 	// Sample the blend map.
 	float4 t = BlendMap.Sample(ss, input.BlendMapTexCoord);

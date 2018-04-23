@@ -133,6 +133,7 @@ copy /Y "$(ProjectDir)white.png" "$(SolutionDir)$(Platform)\$(Configuration)"</C
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="CubeNode.h" />
+    <ClInclude Include="DDSTextureLoader.h" />
     <ClInclude Include="DirectXCore.h" />
     <ClInclude Include="DXWindow.h" />
     <ClInclude Include="Framework.h" />
@@ -153,6 +154,7 @@ copy /Y "$(ProjectDir)white.png" "$(SolutionDir)$(Platform)\$(Configuration)"</C
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CubeNode.cpp" />
+    <ClCompile Include="DDSTextureLoader.cpp" />
     <ClCompile Include="DXWindow.cpp" />
     <ClCompile Include="Framework.cpp" />
     <ClCompile Include="Graphics.cpp" />

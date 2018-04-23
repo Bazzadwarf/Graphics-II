@@ -2,6 +2,7 @@
 #include "SceneNode.h"
 #include "DXWindow.h"
 #include "WICTextureLoader.h"
+#include "DDSTextureLoader.h"
 #include <vector>
 #include <fstream>
 
@@ -53,6 +54,9 @@ public:
 
 	bool LoadHeightMap(wstring heightMapFilename);
 
+	void LoadTerrainTextures();
+	void GenerateBlendMap();
+
 private:	
 	DXWindow * _dxframework;
 	
@@ -78,5 +82,8 @@ private:
 
 	ComPtr<ID3D11RasterizerState> _defaultRasteriserState;
 	ComPtr<ID3D11RasterizerState> _wireframeRasteriserState;
+
+	ComPtr<ID3D11ShaderResourceView> _texturesResourceView;
+	ComPtr<ID3D11ShaderResourceView> _blendMapResourceView;
 };
 
