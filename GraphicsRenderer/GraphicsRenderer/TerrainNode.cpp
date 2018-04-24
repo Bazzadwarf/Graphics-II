@@ -428,32 +428,32 @@ void TerrainNode::GenerateBlendMap()
 
 			// The R value determins how much dirt will be blended in.
 			byte r = 0;
-			if (_heightValues[(i * NUMBER_OF_COLUMNS) + j] > 0.1f)
+			if (_heightValues[(i * NUMBER_OF_COLUMNS) + j] >= 0.1f)
 			{
 				r = 64;
 			}
 
 			// The G value determins how much stone will be blended in.
 			byte g = 0;
-			if (_heightValues[(i * NUMBER_OF_COLUMNS) + j] > 0.4f && _heightValues[(i * NUMBER_OF_COLUMNS) + j] < 0.6f)
+			if (_heightValues[(i * NUMBER_OF_COLUMNS) + j] >= 0.4f && _heightValues[(i * NUMBER_OF_COLUMNS) + j] <= 0.6f)
 			{
 				g = 64;
 			}
-			else if (_heightValues[(i * NUMBER_OF_COLUMNS) + j] > 0.6f && _heightValues[(i * NUMBER_OF_COLUMNS) + j] < 0.8f)
+			else if (_heightValues[(i * NUMBER_OF_COLUMNS) + j] >= 0.6f && _heightValues[(i * NUMBER_OF_COLUMNS) + j] <= 0.8f)
 			{
 				g = 200;
 			}
 			
 			// The B value determins how much light dirt will be blended in.
 			byte b = 0;
-			if (_heightValues[(i * NUMBER_OF_COLUMNS) + j] > 0.2f && _heightValues[(i * NUMBER_OF_COLUMNS) + j] < 0.6f)
+			if (_heightValues[(i * NUMBER_OF_COLUMNS) + j] >= 0.2f && _heightValues[(i * NUMBER_OF_COLUMNS) + j] <= 0.6f)
 			{
 				b = 64;
 			}
 			
 			// The A value determins how much snow will be blended in.
 			byte a = 0;
-			if (_heightValues[(i * NUMBER_OF_COLUMNS) + j] > 0.6f)
+			if (_heightValues[(i * NUMBER_OF_COLUMNS) + j] >= 0.6f)
 			{
 				g = 255;
 			}
