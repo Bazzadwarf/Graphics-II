@@ -58,6 +58,8 @@ public:
 	void LoadTerrainTextures();
 	void GenerateBlendMap();
 
+	float GetHeightAtPoint(float x, float z);
+
 private:	
 	DXWindow * _dxframework;
 	
@@ -68,6 +70,10 @@ private:
 	vector<float> _heightValues;
 
 	int _gridSize = 256;
+
+	float _terrainStartX;
+	float _terrainStartZ;
+	float _spacing = 1;
 
 	ComPtr<ID3D11Buffer> _vertexBuffer;
 	ComPtr<ID3D11Buffer> _indexBuffer;

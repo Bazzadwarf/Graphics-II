@@ -64,7 +64,7 @@ void TerrainNode::Render()
 	_dxframework->GetDeviceContext()->PSSetShaderResources(1, 1, _texturesResourceView.GetAddressOf());
 
 	/*_dxframework->GetDeviceContext()->RSSetState(_wireframeRasteriserState.Get());*/
-	_dxframework->GetDeviceContext()->DrawIndexed(_indices.size(), 0, 0);
+	_dxframework->GetDeviceContext()->DrawIndexed((UINT)_indices.size(), 0, 0);
 	/*_dxframework->GetDeviceContext()->RSSetState(_defaultRasteriserState.Get());*/
 	
 }
@@ -80,36 +80,36 @@ void TerrainNode::GenerateGrid()
 	tempVertex.TexCoord = XMFLOAT2(0, 0);
 	tempVertex.BlendMapTexCoord = XMFLOAT2(0, 0);
 
-	for (float z = 0; z < _gridSize; z++)
+	for (int z = 0; z < _gridSize; z++)
 	{
-		for (float x = 0; x < _gridSize; x++)
+		for (int x = 0; x < _gridSize; x++)
 		{
 			int square = x + (z * _gridSize);
-			float tlx = ((square % _gridSize) - (_gridSize / 2));
-			float tlz = (floor(square / (-_gridSize)) + (_gridSize / 2));
+			float tlx = float((square % _gridSize) - (_gridSize / 2));
+			float tlz = float((floor(square / (-_gridSize)) + (_gridSize / 2)));
 
 			//top left vertex
 			tempVertex.Position = XMFLOAT3(tlx, _heightValues[((z * 257) + x)] * MAGNITUDE, tlz);
 			tempVertex.TexCoord = XMFLOAT2(0, 0);
-			tempVertex.BlendMapTexCoord = XMFLOAT2(x / 256, z / 256);
+			tempVertex.BlendMapTexCoord = XMFLOAT2(x / 257.0f, z / 257.0f);
 			_vertices.push_back(tempVertex);
 
 			//top right vertex
 			tempVertex.Position = XMFLOAT3(tlx + 1, _heightValues[((z * 257) + x) + 1] * MAGNITUDE, tlz);
 			tempVertex.TexCoord = XMFLOAT2(1, 0);
-			tempVertex.BlendMapTexCoord = XMFLOAT2((x + 1) / 256, z / 256);
+			tempVertex.BlendMapTexCoord = XMFLOAT2((x + 1) / 257.0f, z / 257.0f);
 			_vertices.push_back(tempVertex);
 
 			//bottom left vertex
 			tempVertex.Position = XMFLOAT3(tlx, _heightValues[((z * 257) + x) + 257] * MAGNITUDE, tlz - 1);
 			tempVertex.TexCoord = XMFLOAT2(0, 1);
-			tempVertex.BlendMapTexCoord = XMFLOAT2(x / 256, (z + 1) / 256);
+			tempVertex.BlendMapTexCoord = XMFLOAT2(x / 257.0f, (z + 1) / 257.0f);
 			_vertices.push_back(tempVertex);
 
 			//bottom right vertex
 			tempVertex.Position = XMFLOAT3(tlx + 1, _heightValues[((z * 257) + x) + 258] * MAGNITUDE, tlz - 1);
 			tempVertex.TexCoord = XMFLOAT2(1, 1);
-			tempVertex.BlendMapTexCoord = XMFLOAT2((x + 1) / 256, (z + 1) / 256);
+			tempVertex.BlendMapTexCoord = XMFLOAT2((x + 1) / 257.0f, (z + 1) / 257.0f);
 			_vertices.push_back(tempVertex);
 
 														//Triangle 1 v1
@@ -193,7 +193,7 @@ void TerrainNode::BuildGeometryBuffers()
 {
 	D3D11_BUFFER_DESC vertexBufferDescriptor;
 	vertexBufferDescriptor.Usage = D3D11_USAGE_IMMUTABLE;
-	vertexBufferDescriptor.ByteWidth = sizeof(VERTEX) * _vertices.size();
+	vertexBufferDescriptor.ByteWidth = sizeof(VERTEX) * (UINT)_vertices.size();
 	vertexBufferDescriptor.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	vertexBufferDescriptor.CPUAccessFlags = 0;
 	vertexBufferDescriptor.MiscFlags = 0;
@@ -206,7 +206,7 @@ void TerrainNode::BuildGeometryBuffers()
 
 	D3D11_BUFFER_DESC indexBufferDescriptor;
 	indexBufferDescriptor.Usage = D3D11_USAGE_IMMUTABLE;
-	indexBufferDescriptor.ByteWidth = sizeof(UINT) * _indices.size();
+	indexBufferDescriptor.ByteWidth = sizeof(UINT) * (UINT)_indices.size();
 	indexBufferDescriptor.BindFlags = D3D11_BIND_INDEX_BUFFER;
 	indexBufferDescriptor.CPUAccessFlags = 0;
 	indexBufferDescriptor.MiscFlags = 0;
@@ -324,7 +324,7 @@ bool TerrainNode::LoadHeightMap(wstring heightMapFilename)
 	inputHeightMap.close();
 
 	// Normalise BYTE values to the range 0.0f - 1.0f;
-	for (unsigned int i = 0; i < fileSize; i++)
+	for (int i = 0; i < fileSize; i++)
 	{
 		_heightValues.push_back((float)rawFileValues[i] / 255);
 	}
@@ -413,9 +413,9 @@ void TerrainNode::GenerateBlendMap()
 {
 	DWORD blendMap[NUMBER_OF_ROWS * NUMBER_OF_COLUMNS];
 
-	for (DWORD i = 0; i < NUMBER_OF_COLUMNS; i++)
+	for (DWORD z = 0; z < NUMBER_OF_COLUMNS; z++)
 	{
-		for (DWORD j = 0; j < NUMBER_OF_ROWS; j++)
+		for (DWORD x = 0; x < NUMBER_OF_ROWS; x++)
 		{
 			// Calculate the appropriate blend colour for the 
 			// current location in the blend map.  This has been
@@ -428,37 +428,37 @@ void TerrainNode::GenerateBlendMap()
 
 			// The R value determins how much dirt will be blended in.
 			byte r = 0;
-			if (_heightValues[(i * NUMBER_OF_COLUMNS) + j] >= 0.1f)
+			if (_heightValues[(z * NUMBER_OF_COLUMNS) + x] >= 0.1f)
 			{
 				r = 64;
 			}
 
 			// The G value determins how much stone will be blended in.
 			byte g = 0;
-			if (_heightValues[(i * NUMBER_OF_COLUMNS) + j] >= 0.4f && _heightValues[(i * NUMBER_OF_COLUMNS) + j] <= 0.6f)
+			if (_heightValues[(z * NUMBER_OF_COLUMNS) + x] >= 0.4f && _heightValues[(z * NUMBER_OF_COLUMNS) + x] <= 0.6f)
 			{
 				g = 64;
 			}
-			else if (_heightValues[(i * NUMBER_OF_COLUMNS) + j] >= 0.6f && _heightValues[(i * NUMBER_OF_COLUMNS) + j] <= 0.8f)
+			else if (_heightValues[(z * NUMBER_OF_COLUMNS) + x] >= 0.6f && _heightValues[(z * NUMBER_OF_COLUMNS) + x] <= 0.8f)
 			{
 				g = 200;
 			}
 			
 			// The B value determins how much light dirt will be blended in.
 			byte b = 0;
-			if (_heightValues[(i * NUMBER_OF_COLUMNS) + j] >= 0.2f && _heightValues[(i * NUMBER_OF_COLUMNS) + j] <= 0.6f)
+			if (_heightValues[(z * NUMBER_OF_COLUMNS) + x] >= 0.2f && _heightValues[(z * NUMBER_OF_COLUMNS) + x] <= 0.6f)
 			{
 				b = 64;
 			}
 			
 			// The A value determins how much snow will be blended in.
 			byte a = 0;
-			if (_heightValues[(i * NUMBER_OF_COLUMNS) + j] >= 0.6f)
+			if (_heightValues[(z * NUMBER_OF_COLUMNS) + x] >= 0.6f)
 			{
 				g = 255;
 			}
 			
-			blendMap[j + (i * NUMBER_OF_COLUMNS)] = (r | (g << 8) | (b << 16) | (a << 24));
+			blendMap[(z * NUMBER_OF_COLUMNS) + x] = (r | (g << 8) | (b << 16) | (a << 24));
 		}
 	}
 	// Now create the texture from the raw blend map data
@@ -490,5 +490,32 @@ void TerrainNode::GenerateBlendMap()
 	viewDescription.Texture2D.MipLevels = 1;
 
 	ThrowIfFailed(_dxframework->GetDevice()->CreateShaderResourceView(blendMapTexture.Get(), &viewDescription, _blendMapResourceView.GetAddressOf()));
+}
+
+float TerrainNode::GetHeightAtPoint(float x, float z)
+{
+	// Calculate the cell that we are in
+	_terrainStartX = _vertices[0].Position.x;
+	_terrainStartZ = _vertices[0].Position.z;
+
+	int cellX = (int)((x - _terrainStartX) / _spacing);
+	int cellZ = (int)((_terrainStartZ - z) / _spacing);
+
+	// Determine the value equal to the difference between the point z and the edge of the cell
+	float dz = z - _vertices[(z * NUMBER_OF_COLUMNS) + x].Position.z;
+
+	// Determine the value equal to the difference between the point x and the edge of the cell
+	float dx = x - _vertices[(z * NUMBER_OF_COLUMNS) + x].Position.x;
+
+	// Determine the cell we are in
+	if (dx < dz)
+	{
+		// we are in vert1;
+	}
+	else
+	{
+		// we are in vert2
+	}
+	return 0.0f;
 }
 

@@ -10,7 +10,7 @@ void Graphics::CreateSceneGraph()
 	//sceneGraph->Add(cube);
 
 	shared_ptr<MeshNode> node = make_shared<MeshNode>(L"Plane1", L"airplane.x");
-	node->Update(XMMatrixTranslation(0, 0, -10.0f));
+	//node->Update(XMMatrixTranslation(0, 0, -10.0f));
 	sceneGraph->Add(node);
 
 	shared_ptr<TerrainNode> terrain = make_shared<TerrainNode>(L"Terrain", L"rollinghills.raw");
@@ -27,34 +27,53 @@ void Graphics::UpdateSceneGraph()
 	//sceneGraph->Find(L"cube")->SetLocalTransform(XMMatrixRotationAxis(XMVectorSet(1.0f, 1.0f, 1.0f, 0.0f), _rotationAngle * 0.5f * XM_PI / 180.0f));
 	sceneGraph->Find(L"Plane1")->Update(XMMatrixTranslation(0, 0, _rotationAngle));
 
-	if (GetAsyncKeyState(VK_W) < 0)
+	if (GetAsyncKeyState(VK_W) < 0 && GetAsyncKeyState(VK_SHIFT) < 0)
 	{
-		GetCamera()->SetForwardBack(1);
+		this->GetCamera()->SetForwardBack(10);
+	}
+	else if (GetAsyncKeyState(VK_W) < 0)
+	{
+		this->GetCamera()->SetForwardBack(1);
 	}
 
 	if (GetAsyncKeyState(VK_S) < 0)
 	{
-		GetCamera()->SetForwardBack(-1);
-	}
-
-	if (GetAsyncKeyState(VK_A) < 0)
-	{
-		GetCamera()->SetYaw(-1);
+		this->GetCamera()->SetForwardBack(-1);
 	}
 
 	if (GetAsyncKeyState(VK_D) < 0)
 	{
-		GetCamera()->SetYaw(1);
+		this->GetCamera()->SetLeftRight(1);
+	}
+
+	if (GetAsyncKeyState(VK_A) < 0)
+	{
+		this->GetCamera()->SetLeftRight(-1);
+	}
+
+	if (GetAsyncKeyState(VK_LEFT) < 0)
+	{
+		this->GetCamera()->SetYaw(-1);
+	}
+
+	if (GetAsyncKeyState(VK_RIGHT) < 0)
+	{
+		this->GetCamera()->SetYaw(1);
 	}
 
 	if (GetAsyncKeyState(VK_DOWN) < 0)
 	{
-		GetCamera()->SetPitch(-1);
+		this->GetCamera()->SetPitch(-1);
 	}
 
 	if (GetAsyncKeyState(VK_UP) < 0)
 	{
-		GetCamera()->SetPitch(1);
+		this->GetCamera()->SetPitch(1);
+	}
+
+	if (GetAsyncKeyState(VK_PRIOR) < 0)
+	{
+		//this->GetCamera()->
 	}
 
 	if (GetAsyncKeyState(VK_ESCAPE) < 0)
